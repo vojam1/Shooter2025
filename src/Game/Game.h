@@ -19,9 +19,12 @@ public:
 private:
     const uint16_t SCREEN_WIDTH = 1920;
     const uint16_t SCREEN_HEIGHT = 1080;
+    bool isDebug;
 
     void update();
     void render();
+    void processInput();
+
     void setup();
 
     static Camera3D camera;

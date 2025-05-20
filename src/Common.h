@@ -9,6 +9,9 @@
 #include <cstdint>
 #include <memory>
 
+constexpr float SCREEN_WIDTH = 1920;
+constexpr float SCREEN_HEIGHT = 1080;
+
 template <typename T>
 using Ref = std::shared_ptr<T>;
 

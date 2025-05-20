@@ -3,11 +3,13 @@
 //
 
 #include "Game.h"
+#include "../Util/Debug.h"
 
 #include "../Components/KeyboardControllerComponent.h"
 #include "../Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidbodyComponent.h"
+#include "../Systems/DebugRenderSystem.h"
 
 #include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
@@ -18,10 +20,12 @@ Camera3D Game::camera = { 0 };
 Game::Game() {
     entityManager = std::make_unique<EntityManager>();
     eventBus = std::make_unique<EventBus>();
+    isDebug = false;
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Soulslike2025");
-    SetTargetFPS(60);
+    SetTargetFPS(1000);
     ToggleFullscreen();
+    // Debug.add("FPS= " + FPS)
 }
 
 void Game::setup() {
@@ -30,6 +34,7 @@ void Game::setup() {
     entityManager->addSystem<RenderSystem>();
     entityManager->addSystem<MovementSystem>();
     entityManager->addSystem<KeyboardControllerSystem>();
+    entityManager->addSystem<DebugRenderSystem>();
 
     camera.position = (Vector3){ 0.0f, 10.0f, -10.0f }; // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
@@ -43,6 +48,7 @@ void Game::setup() {
     player.addComponent<MeshComponent>("../res/Models/Cube/Cube.gltf");
     player.addComponent<KeyboardControllerComponent>();
 
+    Logger::log("Created player");
 }
 
 
@@ -50,6 +56,8 @@ void Game::run(){
     setup();
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
+        Logger::log("FPS= " + std::to_string(GetFPS()));
+        processInput();
         update();
         render();
     }
@@ -59,7 +67,7 @@ void Game::run(){
 
 void Game::update() {
     const float deltaTime = GetFrameTime();
-
+    Logger::log("deltaTime= " + std::to_string(deltaTime));
     UpdateCamera(&camera, CAMERA_PERSPECTIVE);
 
     entityManager->update();
@@ -81,5 +89,15 @@ void Game::render(){
 
     EndMode3D();
 
+    if (isDebug) {
+        entityManager->getSystem<DebugRenderSystem>().update();
+    }
+
     EndDrawing();
+}
+
+void Game::processInput() {
+    if (IsKeyPressed(KEY_COMMA)) {
+        isDebug = !isDebug;
+    }
 }
