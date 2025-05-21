@@ -17,7 +17,7 @@ public:
         requireComponent<KeyboardControllerComponent>();
     }
 
-    void update() {
+    void update() const {
         for (auto& entity: getSystemEntities()) {
             auto& rigidbody = entity.getComponent<RigidbodyComponent>();
 

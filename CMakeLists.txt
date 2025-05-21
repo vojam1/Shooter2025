@@ -21,6 +21,8 @@ add_executable(Shooter2025 src/main.cpp
         src/Components/CameraComponent.h
         src/Util/Debug.h
         src/Systems/DebugRenderSystem.h
+        src/Components/AnimationComponent.h
+        src/Systems/AnimationSystem.h
 )
 
 include_directories("/usr/local/include")

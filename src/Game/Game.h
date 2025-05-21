@@ -21,13 +21,21 @@ private:
     const uint16_t SCREEN_HEIGHT = 1080;
     bool isDebug;
 
-    Texture2D skyTexture;
+    Texture2D skyTexture{};
+
+    ModelAnimation* zombieModelAnimations {};
+    int32_t zombieAnimCount {0};
 
     void update();
     void render();
     void processInput();
 
     void setup();
+    void unload();
+
+    void spawnEnemy();
+    double timeSinceLastSpawn = 0.0;
+    double enemySpawnTime = 2.0;
 
     static Camera3D camera;
     UniqueRef<EntityManager> entityManager;
