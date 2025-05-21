@@ -7,6 +7,18 @@
 #include <algorithm>
 #include <ranges>
 
+void Entity::tag(const std::string &tag) const {
+    entityManager->tagEntity(*this, tag);
+}
+
+bool Entity::hasTag(const std::string &tag) const {
+    return entityManager->hasTag(*this, tag);
+}
+
+void Entity::kill() const {
+    entityManager->killEntity(*this);
+}
+
 int32_t IComponent::nextId = 0;
 
 void System::addEntityToSystem(const Entity entity) {
@@ -84,4 +96,14 @@ void EntityManager::removeEntityFromSystems(const Entity entity) {
     for (const auto &system: systems | std::views::values) {
         system->removeEntityFromSystem(entity);
     }
+}
+
+void EntityManager::tagEntity(const Entity entity, const std::string &tag) {
+    const auto entityId = entity.getId();
+    tagPerEntity.insert(std::make_pair(entityId, tag));
+}
+
+bool EntityManager::hasTag(const Entity entity, const std::string &tag) const {
+    const auto entityId = entity.getId();
+    return tagPerEntity.at(entityId) == tag;
 }

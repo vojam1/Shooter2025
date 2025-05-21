@@ -21,6 +21,8 @@ private:
     const uint16_t SCREEN_HEIGHT = 1080;
     bool isDebug;
 
+    Texture2D skyTexture;
+
     void update();
     void render();
     void processInput();

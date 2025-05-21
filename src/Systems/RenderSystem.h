@@ -23,7 +23,8 @@ public:
             const auto& transform = entity.getComponent<TransformComponent>();
             const auto& mesh = entity.getComponent<MeshComponent>();
 
-            DrawModel(mesh.model, transform.position, 1.0f, WHITE);    // Draw animated model
+            DrawModelEx(mesh.model, transform.position, transform.rotation, transform.angle, transform.scale, WHITE);
+
         }
     }
 };

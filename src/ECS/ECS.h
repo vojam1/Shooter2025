@@ -21,6 +21,7 @@ class Entity {
 friend class EntityManager;
 public:
     [[nodiscard]] int32_t getId() const { return id; }
+    void kill() const;
 
     bool operator==(const Entity& other) const { return id == other.id; }
     bool operator!=(const Entity& other) const { return id != other.id; }
@@ -34,6 +35,9 @@ public:
 
     Entity(const Entity&) = default;
     Entity& operator=(const Entity&) = default;
+
+    void tag(const std::string& tag) const;
+    [[nodiscard]] bool hasTag(const std::string& tag) const;
 
     class EntityManager* entityManager{};
 private:
@@ -142,10 +146,14 @@ public:
     void addEntityToSystems(Entity entity) const;
     void removeEntityFromSystems(Entity entity);
 
+    void tagEntity(Entity entity, const std::string& tag);
+    bool hasTag(Entity entity, const std::string& tag) const;
+
 private:
     uint32_t numEntities = 0;
     std::array<Ref<IPool>, MAX_COMPONENTS> componentPools;
     std::vector<Signature> entityComponentSignatures;
+    std::unordered_map<int, std::string> tagPerEntity;
     std::unordered_map<std::type_index, Ref<System>> systems;
 
     std::set<Entity> entitiesToBeAdded;

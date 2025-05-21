@@ -26,6 +26,8 @@ Game::Game() {
     SetTargetFPS(1000);
     ToggleFullscreen();
     // Debug.add("FPS= " + FPS)
+
+    skyTexture = LoadTexture("../res/Textures/sky.png");
 }
 
 void Game::setup() {
@@ -36,19 +38,22 @@ void Game::setup() {
     entityManager->addSystem<KeyboardControllerSystem>();
     entityManager->addSystem<DebugRenderSystem>();
 
-    camera.position = (Vector3){ 0.0f, 10.0f, -10.0f }; // Camera position
+    camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
     camera.up = (Vector3){ 0.0f, 1.0f, 0.0f };          // Camera up vector (rotation towards target)
     camera.fovy = 45.0f;                                // Camera field-of-view Y
     camera.projection = CAMERA_PERSPECTIVE;             // Camera projection type
 
     Entity player = entityManager->createEntity();
-    player.addComponent<TransformComponent>(Vector3{ 0.0f, 0.0f, 0.0f });
+    player.tag("player");
+    player.addComponent<TransformComponent>(Vector3{ 0.0f, 1.0f, 5.0f }, Vector3{ 0.25f, 0.25f, 0.25f });
     player.addComponent<RigidbodyComponent>(Vector3{ 0.0f, 0.0f, 0.0f }, 5.0f);
-    player.addComponent<MeshComponent>("../res/Models/Cube/Cube.gltf");
+    player.addComponent<MeshComponent>("../res/Models/Player/Soldier.glb");
     player.addComponent<KeyboardControllerComponent>();
 
-    Logger::log("Created player");
+    Entity ground = entityManager->createEntity();
+    ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
+    ground.addComponent<MeshComponent>("../res/Models/Cube/Cube.gltf");
 }
 
 
@@ -63,29 +68,29 @@ void Game::run(){
     }
 
     CloseWindow();
+    UnloadTexture(skyTexture);
 }
 
 void Game::update() {
     const float deltaTime = GetFrameTime();
-    Logger::log("deltaTime= " + std::to_string(deltaTime));
     UpdateCamera(&camera, CAMERA_PERSPECTIVE);
 
     entityManager->update();
-
     entityManager->getSystem<MovementSystem>().update(deltaTime);
     entityManager->getSystem<KeyboardControllerSystem>().update();
 }
+
 
 void Game::render(){
     BeginDrawing();
 
     ClearBackground(RAYWHITE);
 
+    DrawTexture(skyTexture, 0, 0, WHITE);
+
     BeginMode3D(camera);
 
         entityManager->getSystem<RenderSystem>().update(camera);
-
-        DrawGrid(10, 1.0f);
 
     EndMode3D();
 

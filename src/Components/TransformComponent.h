@@ -5,17 +5,23 @@
 #ifndef TRANSFORMCOMPONENT_H
 #define TRANSFORMCOMPONENT_H
 
-#include <raymath.h>
+#include <raylib.h>
 
 struct TransformComponent {
     Vector3 position{};
     Vector3 scale{};
-    double rotation;
+    Vector3 rotation{};
+    float angle{};
 
-    explicit TransformComponent(const Vector3 position = {0, 0, 0} , const Vector3 scale = {1.0f, 1.0f, 1.0f }, const double rotation = 0.0) {
+    explicit TransformComponent(const Vector3 position = {0, 0, 0},
+            const Vector3 scale = {1.0f, 1.0f, 1.0f },
+            const Vector3 rotation = {1.0f, 1.0f, 1.0f },
+            const float angle = 0.0f)
+    {
         this->position = position;
         this->scale = scale;
         this->rotation = rotation;
+        this->angle = angle;
     }
 };
 

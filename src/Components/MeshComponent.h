@@ -10,6 +10,10 @@
 struct MeshComponent {
     Model model {};
 
+    explicit MeshComponent(const Mesh &mesh) {
+        this->model = LoadModelFromMesh(mesh);
+    }
+
     explicit MeshComponent(const char* filePath = ""){
         this->model = LoadModel(filePath);
     }

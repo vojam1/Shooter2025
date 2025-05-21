@@ -21,7 +21,9 @@ public:
             auto& transform = entity.getComponent<TransformComponent>();
             const auto& rigidbody = entity.getComponent<RigidbodyComponent>();
 
-            transform.position += rigidbody.velocity * deltaTime * rigidbody.speedMultiplier;
+            transform.position += rigidbody.velocity * rigidbody.speedMultiplier * deltaTime;
+            if (transform.position.x > 1.75f) transform.position.x = 1.75f;
+            if (transform.position.x < -1.75f) transform.position.x = -1.75f;
         }
     }
 };
