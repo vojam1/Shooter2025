@@ -19,16 +19,19 @@ public:
         requireComponent<MeshComponent>();
     }
 
-    void update(float deltaTime) {
+    void update(const float deltaTime) {
         for (auto& entity: getSystemEntities()) {
             auto& animation = entity.getComponent<AnimationComponent>();
             const auto& mesh = entity.getComponent<MeshComponent>();
+            const ModelAnimation anim = animation.modelAnimations[animation.animIndex];
 
             animation.timeSinceLastFrame += deltaTime;
 
             if (animation.timeSinceLastFrame > 0.025) {
-                const ModelAnimation anim = animation.modelAnimations[animation.animIndex];
-                animation.animCurrentFrame = (animation.animCurrentFrame + 1)%anim.frameCount;
+                animation.animCurrentFrame += 1;
+                if (animation.animCurrentFrame > anim.frameCount) {
+                    animation.animCurrentFrame = 0;
+                }
                 UpdateModelAnimation(mesh.model, anim, animation.animCurrentFrame);
                 animation.timeSinceLastFrame = 0.0;
             }

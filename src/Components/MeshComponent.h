@@ -14,6 +14,10 @@ struct MeshComponent {
         this->model = LoadModelFromMesh(mesh);
     }
 
+    explicit MeshComponent(const Model& model) {
+        this->model = model;
+    }
+
     explicit MeshComponent(const char* filePath = ""){
         this->model = LoadModel(filePath);
     }

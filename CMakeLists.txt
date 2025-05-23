@@ -23,6 +23,14 @@ add_executable(Shooter2025 src/main.cpp
         src/Systems/DebugRenderSystem.h
         src/Components/AnimationComponent.h
         src/Systems/AnimationSystem.h
+        src/Game/Scene.cpp
+        src/Game/Scene.h
+        src/Systems/EnemySpawnerSystem.h
+        src/AssetBank/AssetBank.cpp
+        src/AssetBank/AssetBank.h
+        src/Components/HealthComponent.h
+        src/Systems/DeathSystem.h
+        src/Events/DeathEvent.h
 )
 
 include_directories("/usr/local/include")

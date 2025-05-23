@@ -7,6 +7,7 @@
 #include <raylib.h>
 
 #include "../Common.h"
+#include "../AssetBank/AssetBank.h"
 #include "../ECS/ECS.h"
 #include "../EventBus/EventBus.h"
 
@@ -23,9 +24,6 @@ private:
 
     Texture2D skyTexture{};
 
-    ModelAnimation* zombieModelAnimations {};
-    int32_t zombieAnimCount {0};
-
     void update();
     void render();
     void processInput();
@@ -33,13 +31,13 @@ private:
     void setup();
     void unload();
 
-    void spawnEnemy();
     double timeSinceLastSpawn = 0.0;
     double enemySpawnTime = 2.0;
 
     static Camera3D camera;
     UniqueRef<EntityManager> entityManager;
     UniqueRef<EventBus> eventBus;
+    UniqueRef<AssetBank> assetBank;
 };
 
 

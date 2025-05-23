@@ -1,84 +1,92 @@
-//
-// Created by sputnik on 5/19/25.
-//
-
 #ifndef EVENTBUS_H
 #define EVENTBUS_H
-#include <functional>
+
 #include <map>
 #include <typeindex>
+#include <functional>
 #include <list>
+#include <memory>
 
 #include "Event.h"
-#include "../Common.h"
 
 class IEventCallback {
-public:
-    virtual ~IEventCallback() = default;
+    private:
+        virtual void call(Event& e) = 0;
 
-    void execute(Event& event) {
-        call(event);
-    }
+    public:
+        virtual ~IEventCallback() = default;
 
-private:
-    virtual void call(Event& event) = 0;
+        void execute(Event& e) {
+            call(e);
+        }
 };
 
 template <typename TOwner, typename TEvent>
-class EventCallback final : public IEventCallback {
-public:
-    typedef void (TOwner::*CallbackFunction)(TEvent&);
+class EventCallback: public IEventCallback {
+    private:
+        typedef void (TOwner::*CallbackFunction)(TEvent&);
 
-    EventCallback(TOwner* ownerInstance, CallbackFunction callbackFunction) {
-        this->ownerInstance = ownerInstance;
-        this->callbackFunction = callbackFunction;
-    }
-    ~EventCallback() override = default;
+        TOwner* ownerInstance;
+        CallbackFunction callbackFunction;
 
-private:
-    TOwner* ownerInstance;
-    CallbackFunction callbackFunction;
+        void call(Event& e) override {
+            std::invoke(callbackFunction, ownerInstance, static_cast<TEvent&>(e));
+        }
 
-    void call(Event &event) override {
-        std::invoke(this->callbackFunction, static_cast<TOwner*>(this->ownerInstance), static_cast<TEvent&>(event));
-    }
+    public:
+        EventCallback(TOwner* ownerInstance, CallbackFunction callbackFunction) {
+            this->ownerInstance = ownerInstance;
+            this->callbackFunction = callbackFunction;
+        }
+
+        ~EventCallback() override = default;
 };
 
-typedef std::list<UniqueRef<IEventCallback>> HandlerList;
+typedef std::list<std::unique_ptr<IEventCallback>> HandlerList;
 
 class EventBus {
-public:
-    EventBus() = default;
-    ~EventBus() = default;
+    private:
+        std::map<std::type_index, std::unique_ptr<HandlerList>> subscribers;
+    public:
+        EventBus() = default;
+        ~EventBus() = default;
 
-    void reset() {
-        subscribers.clear();
-    }
+        // Clears the subscribers list
+        void reset() {
+            subscribers.clear();
+        }
 
-    template<typename TEvent, typename ... TArgs>
-    void emitEvent(TArgs&& ...args) {
-        const auto handlers = subscribers[typeid(TEvent)].get();
-        if (handlers) {
-            for (auto & it : *handlers) {
-                auto handler = it.get();
-                TEvent event(std::forward<TArgs>(args)...);
-                handler->execute(event);
+        ///////////////////////////////////////////////////////////////////////
+        // Subscribe to an event type <T>
+        // In our implementation, a listener subscribes to an event
+        // Example: eventBus->SubscribeToEvent<CollisionEvent>(this, &Game::onCollision);
+        ///////////////////////////////////////////////////////////////////////
+        template <typename TEvent, typename TOwner>
+        void subscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent&)) {
+            if (!subscribers[typeid(TEvent)].get()) {
+                subscribers[typeid(TEvent)] = std::make_unique<HandlerList>();
+            }
+            auto subscriber = std::make_unique<EventCallback<TOwner, TEvent>>(ownerInstance, callbackFunction);
+            subscribers[typeid(TEvent)]->push_back(std::move(subscriber));
+        }
+
+        ///////////////////////////////////////////////////////////////////////
+        // Emit an event of type <T>
+        // In our implementation, as soon as something emits an
+        // event we go ahead and execute all the listener callback functions
+        // Example: eventBus->EmitEvent<CollisionEvent>(player, enemy);
+        ///////////////////////////////////////////////////////////////////////
+        template <typename TEvent, typename ...TArgs>
+        void emitEvent(TArgs&& ...args) {
+            auto handlers = subscribers[typeid(TEvent)].get();
+            if (handlers) {
+                for (auto & it : *handlers) {
+                    auto handler = it.get();
+                    TEvent event(std::forward<TArgs>(args)...);
+                    handler->execute(event);
+                }
             }
         }
-    }
-
-    template<typename TEvent, typename TOwner>
-    void subscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent&)) {
-        if (!subscribers[typeid(TEvent)].get()) {
-            subscribers[typeid(TEvent)] = std::make_unique<HandlerList>();
-        }
-
-        auto subscriber = std::make_unique<EventCallback<TOwner, TEvent>>(ownerInstance, callbackFunction);
-        subscribers[typeid(TEvent)]->push_back(std::move(subscriber));
-    }
-
-private:
-    std::map<std::type_index, UniqueRef<HandlerList>> subscribers;
 };
 
-#endif //EVENTBUS_H
+#endif
