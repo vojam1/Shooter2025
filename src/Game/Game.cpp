@@ -3,6 +3,9 @@
 //
 
 #include "Game.h"
+
+#include <iostream>
+
 #include "../Util/Debug.h"
 
 #include "../Components/KeyboardControllerComponent.h"
@@ -10,20 +13,24 @@
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidbodyComponent.h"
 #include "../Components/HealthComponent.h"
+#include "../Components/CollisionSphereComponent.h"
 
 #include "../Systems/AnimationSystem.h"
+#include "../Systems/CollisionShapesRenderSystem.h"
+#include "../Systems/DamageSystem.h"
 #include "../Systems/DebugRenderSystem.h"
 #include "../Systems/EnemySpawnerSystem.h"
 #include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/KeyboardControllerSystem.h"
+#include "../Systems/ProjectileSystem.h"
 
 Camera3D Game::camera = { 0 };
 
 Game::Game() {
     entityManager = std::make_unique<EntityManager>();
     assetBank = std::make_unique<AssetBank>();
-
+    eventBus = std::make_unique<EventBus>();
     isDebug = false;
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Soulslike2025");
@@ -42,6 +49,8 @@ void Game::setup() {
     entityManager->addSystem<DebugRenderSystem>();
     entityManager->addSystem<AnimationSystem>();
     entityManager->addSystem<EnemySpawnerSystem>();
+    entityManager->addSystem<DamageSystem>();
+    entityManager->addSystem<CollisionShapesRenderSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
     assetBank->addModel("zombie_model", "../res/Models/Zombie/Zombie.glb");
@@ -59,6 +68,7 @@ void Game::setup() {
     player.addComponent<MeshComponent>(assetBank->getModel("player_model"));
     player.addComponent<KeyboardControllerComponent>();
     player.addComponent<HealthComponent>();
+    player.addComponent<CollisionSphereComponent>(0.5f, 5, 5, GREEN);
 
     Entity ground = entityManager->createEntity();
     ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
@@ -83,6 +93,9 @@ void Game::update() {
     const float deltaTime = GetFrameTime();
     UpdateCamera(&camera, CAMERA_PERSPECTIVE);
 
+    eventBus->Reset();
+    entityManager->getSystem<DamageSystem>().subscribeToEvents(eventBus);
+
     entityManager->update();
     entityManager->getSystem<EnemySpawnerSystem>().update(entityManager, assetBank);
     entityManager->getSystem<MovementSystem>().update(deltaTime);
@@ -101,6 +114,9 @@ void Game::render(){
     BeginMode3D(camera);
 
         entityManager->getSystem<RenderSystem>().update(camera);
+        if (isDebug) {
+            entityManager->getSystem<CollisionShapesRenderSystem>().update();
+        }
 
     EndMode3D();
 
@@ -115,6 +131,7 @@ void Game::processInput() {
     if (IsKeyPressed(KEY_COMMA)) {
         isDebug = !isDebug;
     }
+
 }
 
 

@@ -9,6 +9,7 @@
 #include "../Common.h"
 #include "../AssetBank/AssetBank.h"
 #include "../ECS/ECS.h"
+#include "../EventBus/EventBus.h"
 
 class Game {
 public:
@@ -36,6 +37,7 @@ private:
     static Camera3D camera;
     UniqueRef<EntityManager> entityManager;
     UniqueRef<AssetBank> assetBank;
+    UniqueRef<EventBus> eventBus;
 };
 
 

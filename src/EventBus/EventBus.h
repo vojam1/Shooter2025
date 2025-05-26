@@ -63,7 +63,8 @@ class EventBus {
         /////////////////////////////////////////////////////////////////////// 
         template <typename TEvent, typename TOwner>
         void subscribeToEvent(TOwner* ownerInstance, void (TOwner::*callbackFunction)(TEvent&)) {
-            if (!subscribers[typeid(TEvent)].get()) {
+            auto it = subscribers.find(typeid(TEvent));
+            if (it == subscribers.end()) {
                 subscribers[typeid(TEvent)] = std::make_unique<HandlerList>();
             }
             auto subscriber = std::make_unique<EventCallback<TOwner, TEvent>>(ownerInstance, callbackFunction);
@@ -78,15 +79,15 @@ class EventBus {
         /////////////////////////////////////////////////////////////////////// 
         template <typename TEvent, typename ...TArgs>
         void emitEvent(TArgs&& ...args) {
-            auto handlers = subscribers[typeid(TEvent)].get();
-            if (handlers) {
-                for (auto it = handlers->begin(); it != handlers->end(); it++) {
-                    auto handler = it->get();
-                    TEvent event(std::forward<TArgs>(args)...);
-                    handler->Execute(event);
+            auto it = subscribers.find(typeid(TEvent));
+            if (it != subscribers.end()) {
+                TEvent event(std::forward<TArgs>(args)...);
+                for (auto& handlerPtr : *(it->second)) {
+                    handlerPtr->Execute(event);
                 }
             }
         }
+
 };
 
 #endif
