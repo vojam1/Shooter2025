@@ -9,11 +9,11 @@
 #include "../Components/MeshComponent.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidbodyComponent.h"
+#include "../Components/HealthComponent.h"
+
 #include "../Systems/AnimationSystem.h"
-#include "../Systems/DeathSystem.h"
 #include "../Systems/DebugRenderSystem.h"
 #include "../Systems/EnemySpawnerSystem.h"
-
 #include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/KeyboardControllerSystem.h"
@@ -22,7 +22,6 @@ Camera3D Game::camera = { 0 };
 
 Game::Game() {
     entityManager = std::make_unique<EntityManager>();
-    eventBus = std::make_unique<EventBus>();
     assetBank = std::make_unique<AssetBank>();
 
     isDebug = false;
@@ -43,10 +42,9 @@ void Game::setup() {
     entityManager->addSystem<DebugRenderSystem>();
     entityManager->addSystem<AnimationSystem>();
     entityManager->addSystem<EnemySpawnerSystem>();
-    entityManager->addSystem<DeathSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
-    assetBank->addModel("zombie_model", "../res/Models/Zombie/Zombie2.glb");
+    assetBank->addModel("zombie_model", "../res/Models/Zombie/Zombie.glb");
 
     camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
@@ -60,6 +58,7 @@ void Game::setup() {
     player.addComponent<RigidbodyComponent>(Vector3{ 0.0f, 0.0f, 0.0f }, 5.0f);
     player.addComponent<MeshComponent>(assetBank->getModel("player_model"));
     player.addComponent<KeyboardControllerComponent>();
+    player.addComponent<HealthComponent>();
 
     Entity ground = entityManager->createEntity();
     ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
@@ -83,9 +82,6 @@ void Game::run(){
 void Game::update() {
     const float deltaTime = GetFrameTime();
     UpdateCamera(&camera, CAMERA_PERSPECTIVE);
-
-    eventBus.reset();
-    //entityManager->getSystem<DeathSystem>().subscribeToEvents(eventBus);
 
     entityManager->update();
     entityManager->getSystem<EnemySpawnerSystem>().update(entityManager, assetBank);

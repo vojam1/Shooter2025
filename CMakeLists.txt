@@ -29,8 +29,6 @@ add_executable(Shooter2025 src/main.cpp
         src/AssetBank/AssetBank.cpp
         src/AssetBank/AssetBank.h
         src/Components/HealthComponent.h
-        src/Systems/DeathSystem.h
-        src/Events/DeathEvent.h
 )
 
 include_directories("/usr/local/include")

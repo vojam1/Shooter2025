@@ -40,8 +40,9 @@ const Signature& System::getSignature() const {
 }
 
 void EntityManager::update() {
-    for (const Entity entity: entitiesToBeAdded) {
+    for (const Entity& entity: entitiesToBeAdded) {
         addEntityToSystems(entity);
+        entities.push_back(entity);
     }
     entitiesToBeAdded.clear();
 
@@ -101,9 +102,20 @@ void EntityManager::removeEntityFromSystems(const Entity entity) {
 void EntityManager::tagEntity(const Entity entity, const std::string &tag) {
     const auto entityId = entity.getId();
     tagPerEntity.insert(std::make_pair(entityId, tag));
+    entityPerTag.insert(std::make_pair(tag, entityId));
 }
 
 bool EntityManager::hasTag(const Entity entity, const std::string &tag) const {
     const auto entityId = entity.getId();
     return tagPerEntity.at(entityId) == tag;
 }
+
+Entity &EntityManager::getEntityFromId(const int32_t id) {
+    return entities[id];
+}
+
+Entity &EntityManager::getEntityFromTag(const std::string& tag) {
+    const auto entityId = entityPerTag.at(tag);
+    return getEntityFromId(entityId);
+}
+

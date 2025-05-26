@@ -133,6 +133,9 @@ public:
     Entity createEntity();
     void killEntity(Entity entity);
 
+    Entity& getEntityFromTag(const std::string &tag);
+    Entity& getEntityFromId(int32_t id);
+
     template<typename TComponent, typename ...TArgs> void addComponent(Entity entity, TArgs&& ...args);
     template<typename TComponent> void removeComponent(Entity entity);
     template<typename TComponent> TComponent& getComponent(Entity entity) const;
@@ -151,9 +154,13 @@ public:
 
 private:
     uint32_t numEntities = 0;
+    std::vector<Entity> entities;
     std::array<Ref<IPool>, MAX_COMPONENTS> componentPools;
     std::vector<Signature> entityComponentSignatures;
+
     std::unordered_map<int, std::string> tagPerEntity;
+    std::unordered_map<std::string, int> entityPerTag;
+
     std::unordered_map<std::type_index, Ref<System>> systems;
 
     std::set<Entity> entitiesToBeAdded;
