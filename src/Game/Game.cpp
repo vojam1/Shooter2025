@@ -17,6 +17,7 @@
 
 #include "../Systems/AnimationSystem.h"
 #include "../Systems/CollisionShapesRenderSystem.h"
+#include "../Systems/CollisionSystem.h"
 #include "../Systems/DamageSystem.h"
 #include "../Systems/DebugRenderSystem.h"
 #include "../Systems/EnemySpawnerSystem.h"
@@ -51,9 +52,12 @@ void Game::setup() {
     entityManager->addSystem<EnemySpawnerSystem>();
     entityManager->addSystem<DamageSystem>();
     entityManager->addSystem<CollisionShapesRenderSystem>();
+    entityManager->addSystem<CollisionSystem>();
+    entityManager->addSystem<ProjectileSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
     assetBank->addModel("zombie_model", "../res/Models/Zombie/Zombie.glb");
+    assetBank->addModel("bullet_model", "../res/Models/Bullet/Bullet.glb");
 
     camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
@@ -68,7 +72,7 @@ void Game::setup() {
     player.addComponent<MeshComponent>(assetBank->getModel("player_model"));
     player.addComponent<KeyboardControllerComponent>();
     player.addComponent<HealthComponent>();
-    player.addComponent<CollisionSphereComponent>(0.5f, 5, 5, GREEN);
+    player.addComponent<CollisionSphereComponent>(0.75f, 5, 5, GREEN);
 
     Entity ground = entityManager->createEntity();
     ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
@@ -101,6 +105,9 @@ void Game::update() {
     entityManager->getSystem<MovementSystem>().update(deltaTime);
     entityManager->getSystem<KeyboardControllerSystem>().update();
     entityManager->getSystem<AnimationSystem>().update(deltaTime);
+    entityManager->getSystem<CollisionSystem>().update(entityManager, eventBus);
+    Logger::log(std::to_string(entityManager->getEntityFromTag("player").getComponent<HealthComponent>().health));
+
 }
 
 
@@ -131,9 +138,10 @@ void Game::processInput() {
     if (IsKeyPressed(KEY_COMMA)) {
         isDebug = !isDebug;
     }
-
+    if (IsKeyPressed(KEY_ENTER)) {
+        ProjectileSystem::fireProjectile(entityManager->getEntityFromTag("player"), entityManager, assetBank);
+    }
 }
-
 
 void Game::unload() {
     UnloadTexture(skyTexture);

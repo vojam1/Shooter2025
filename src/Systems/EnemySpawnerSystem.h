@@ -21,10 +21,10 @@ public:
             const float xPos = posArray[GetRandomValue(0, 2)];
             for (int i=0; i<GetRandomValue(4,7); i++) {
                 Entity zombie = entityManager->createEntity();
-                //zombie.tag("enemy");
+                zombie.group("enemy");
                 zombie.addComponent<TransformComponent>(Vector3{ xPos, 0.0f, -30.0f - static_cast<float>(i) }, Vector3{ 0.35f, 0.35f, 0.35f });
                 zombie.addComponent<MeshComponent>(assetBank->getModel("zombie_model"));
-                zombie.addComponent<CollisionSphereComponent>(0.5f, 3, 3, RED);
+                zombie.addComponent<CollisionSphereComponent>(0.5f, 5, 5, RED);
                 zombie.addComponent<RigidbodyComponent>(Vector3{ 0.0f, 0.0f, 1.0f }, 5.0f);
                 zombie.addComponent<HealthComponent>();
             }

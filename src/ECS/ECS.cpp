@@ -11,9 +11,19 @@ void Entity::tag(const std::string &tag) const {
     entityManager->tagEntity(*this, tag);
 }
 
+void Entity::group(const std::string &group) const {
+    entityManager->groupEntity(*this, group);
+}
+
+
 bool Entity::hasTag(const std::string &tag) const {
     return entityManager->hasTag(*this, tag);
 }
+
+bool Entity::hasGroup(const std::string &group) const {
+    return entityManager->hasGroup(*this, group);
+}
+
 
 void Entity::kill() const {
     entityManager->killEntity(*this);
@@ -51,6 +61,7 @@ void EntityManager::update() {
 
         removeEntityFromSystems(entity);
         entityComponentSignatures[entityId].reset();
+        entities.erase(std::ranges::find(entities, entity));
         freeIds.push_back(entityId);
     }
     entitiesToBeRemoved.clear();
@@ -119,3 +130,18 @@ Entity &EntityManager::getEntityFromTag(const std::string& tag) {
     return getEntityFromId(entityId);
 }
 
+void EntityManager::groupEntity(const Entity entity, const std::string &group) {
+    if (!entitiesInGroup.contains(group)) {
+        entitiesInGroup[group] = std::vector<Entity>();
+    }
+    entitiesInGroup.at(group).push_back(entity);
+}
+
+bool EntityManager::hasGroup(const Entity entity, const std::string &group) const {
+    const auto& vector = entitiesInGroup.at(group);
+    return std::ranges::find(vector, entity) != vector.end();
+}
+
+std::vector<Entity>& EntityManager::getEntitiesInGroup(const std::string &group) {
+    return entitiesInGroup[group];
+}

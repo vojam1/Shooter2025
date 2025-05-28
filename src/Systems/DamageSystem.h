@@ -24,6 +24,9 @@ public:
         const auto& entity = event.entity;
         auto& healthComp = entity.getComponent<HealthComponent>();
         healthComp.health -= event.damage;
+        if (healthComp.health <= 0) {
+            entity.kill();
+        }
     }
 };
 
