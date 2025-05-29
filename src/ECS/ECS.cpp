@@ -52,7 +52,6 @@ const Signature& System::getSignature() const {
 void EntityManager::update() {
     for (const Entity& entity: entitiesToBeAdded) {
         addEntityToSystems(entity);
-        entities.push_back(entity);
     }
     entitiesToBeAdded.clear();
 
@@ -60,8 +59,8 @@ void EntityManager::update() {
         const int32_t entityId = entity.getId();
 
         removeEntityFromSystems(entity);
+        removeEntityFromGroups(entity);
         entityComponentSignatures[entityId].reset();
-        entities.erase(std::ranges::find(entities, entity));
         freeIds.push_back(entityId);
     }
     entitiesToBeRemoved.clear();
@@ -111,26 +110,22 @@ void EntityManager::removeEntityFromSystems(const Entity entity) {
 }
 
 void EntityManager::tagEntity(const Entity entity, const std::string &tag) {
-    const auto entityId = entity.getId();
-    tagPerEntity.insert(std::make_pair(entityId, tag));
-    entityPerTag.insert(std::make_pair(tag, entityId));
+    auto ent = std::make_shared<Entity>(entity);
+    entityPerTag.insert(std::make_pair(tag, ent));
 }
 
 bool EntityManager::hasTag(const Entity entity, const std::string &tag) const {
-    const auto entityId = entity.getId();
-    return tagPerEntity.at(entityId) == tag;
-}
-
-Entity &EntityManager::getEntityFromId(const int32_t id) {
-    return entities[id];
+    return *entityPerTag.at(tag) == entity;
 }
 
 Entity &EntityManager::getEntityFromTag(const std::string& tag) {
-    const auto entityId = entityPerTag.at(tag);
-    return getEntityFromId(entityId);
+    return *entityPerTag[tag];
 }
 
 void EntityManager::groupEntity(const Entity entity, const std::string &group) {
+    if (std::ranges::find(groups, group) == groups.end()) {
+        groups.push_back(group);
+    }
     if (!entitiesInGroup.contains(group)) {
         entitiesInGroup[group] = std::vector<Entity>();
     }
@@ -144,4 +139,16 @@ bool EntityManager::hasGroup(const Entity entity, const std::string &group) cons
 
 std::vector<Entity>& EntityManager::getEntitiesInGroup(const std::string &group) {
     return entitiesInGroup[group];
+}
+
+void EntityManager::removeEntityFromGroup(Entity entity, const std::string &group) {
+    entitiesInGroup.at(group).erase(std::ranges::find(entitiesInGroup.at(group), entity));
+}
+
+void EntityManager::removeEntityFromGroups(const Entity entity) {
+    for (auto& group: groups) {
+        if (entity.hasGroup(group)) {
+            removeEntityFromGroup(entity, group);
+        }
+    }
 }

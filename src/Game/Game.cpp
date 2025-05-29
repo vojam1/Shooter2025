@@ -107,7 +107,7 @@ void Game::update() {
     entityManager->getSystem<AnimationSystem>().update(deltaTime);
     entityManager->getSystem<CollisionSystem>().update(entityManager, eventBus);
     Logger::log(std::to_string(entityManager->getEntityFromTag("player").getComponent<HealthComponent>().health));
-
+    Logger::log(std::to_string(entityManager->getNumEntities()));
 }
 
 

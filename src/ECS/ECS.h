@@ -43,6 +43,7 @@ public:
     [[nodiscard]] bool hasGroup(const std::string& group) const;
 
     class EntityManager* entityManager{};
+
 private:
     explicit Entity(const int32_t id): id(id) {};
     int32_t id;
@@ -137,13 +138,14 @@ public:
     void killEntity(Entity entity);
 
     Entity& getEntityFromTag(const std::string &tag);
-    Entity& getEntityFromId(int32_t id);
     void tagEntity(Entity entity, const std::string& tag);
     bool hasTag(Entity entity, const std::string& tag) const;
 
     void groupEntity(Entity entity, const std::string& group);
     bool hasGroup(Entity entity, const std::string& group) const;
     std::vector<Entity>& getEntitiesInGroup(const std::string& group);
+    void removeEntityFromGroup(Entity entity, const std::string& group);
+    void removeEntityFromGroups(Entity entity);
 
     template<typename TComponent, typename ...TArgs> void addComponent(Entity entity, TArgs&& ...args);
     template<typename TComponent> void removeComponent(Entity entity);
@@ -158,16 +160,15 @@ public:
     void addEntityToSystems(Entity entity) const;
     void removeEntityFromSystems(Entity entity);
 
+    uint32_t getNumEntities() const { return numEntities; }
 private:
     uint32_t numEntities = 0;
-    std::vector<Entity> entities;
     std::array<Ref<IPool>, MAX_COMPONENTS> componentPools;
     std::vector<Signature> entityComponentSignatures;
 
-    std::unordered_map<int, std::string> tagPerEntity;
-    std::unordered_map<std::string, int> entityPerTag;
-
+    std::unordered_map<std::string, Ref<Entity>> entityPerTag;
     std::unordered_map<std::string, std::vector<Entity>> entitiesInGroup;
+    std::vector<std::string> groups;
 
     std::unordered_map<std::type_index, Ref<System>> systems;
 
