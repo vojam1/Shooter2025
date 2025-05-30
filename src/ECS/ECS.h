@@ -139,7 +139,7 @@ public:
 
     Entity& getEntityFromTag(const std::string &tag);
     void tagEntity(Entity entity, const std::string& tag);
-    bool hasTag(Entity entity, const std::string& tag) const;
+    bool hasTag(Entity entity, const std::string& tag);
 
     void groupEntity(Entity entity, const std::string& group);
     bool hasGroup(Entity entity, const std::string& group) const;

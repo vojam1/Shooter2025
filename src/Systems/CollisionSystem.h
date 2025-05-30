@@ -38,7 +38,7 @@ public:
                     bulletTransform.position,
                     bulletCollision.radius
                 )) {
-                    eventBus->emitEvent<DamageEvent>(enemy, 30);
+                    eventBus->emitEvent<DamageEvent>(enemy, 50);
                     eventBus->emitEvent<DamageEvent>(bullet, 100);
                 }
             }

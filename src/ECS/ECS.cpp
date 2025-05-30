@@ -114,8 +114,9 @@ void EntityManager::tagEntity(const Entity entity, const std::string &tag) {
     entityPerTag.insert(std::make_pair(tag, ent));
 }
 
-bool EntityManager::hasTag(const Entity entity, const std::string &tag) const {
-    return *entityPerTag.at(tag) == entity;
+bool EntityManager::hasTag(const Entity entity, const std::string &tag){
+    if (entityPerTag[tag] == nullptr) { return false; }
+    return  *entityPerTag[tag] == entity;
 }
 
 Entity &EntityManager::getEntityFromTag(const std::string& tag) {

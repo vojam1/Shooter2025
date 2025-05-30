@@ -11,9 +11,9 @@
 class DamageEvent: public Event {
 public:
     int32_t damage;
-    Entity entity;
+    const Entity entity;
 
-    explicit DamageEvent(Entity& entity, int32_t damage): entity(entity), damage(damage) {}
+    explicit DamageEvent(const Entity& entity, const int32_t damage): damage(damage), entity(entity) {}
 };
 
 #endif //DAMAGEEVENT_H

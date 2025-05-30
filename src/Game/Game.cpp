@@ -16,6 +16,7 @@
 #include "../Components/CollisionSphereComponent.h"
 
 #include "../Systems/AnimationSystem.h"
+#include "../Systems/BoundsSystem.h"
 #include "../Systems/CollisionShapesRenderSystem.h"
 #include "../Systems/CollisionSystem.h"
 #include "../Systems/DamageSystem.h"
@@ -35,7 +36,7 @@ Game::Game() {
     isDebug = false;
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Soulslike2025");
-    SetTargetFPS(1000);
+    SetTargetFPS(60);
     ToggleFullscreen();
 
     skyTexture = LoadTexture("../res/Textures/sky.png");
@@ -54,9 +55,11 @@ void Game::setup() {
     entityManager->addSystem<CollisionShapesRenderSystem>();
     entityManager->addSystem<CollisionSystem>();
     entityManager->addSystem<ProjectileSystem>();
+    entityManager->addSystem<BoundsSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
     assetBank->addModel("zombie_model", "../res/Models/Zombie/Zombie.glb");
+    assetBank->addModelAnimation("zombie_animation", "../res/Models/Zombie/Zombie.glb");
     assetBank->addModel("bullet_model", "../res/Models/Bullet/Bullet.glb");
 
     camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
@@ -79,7 +82,6 @@ void Game::setup() {
     ground.addComponent<MeshComponent>(GenMeshCube(1.75f, 1.f, 10.f));
 
 }
-
 
 void Game::run(){
     setup();
@@ -104,8 +106,9 @@ void Game::update() {
     entityManager->getSystem<EnemySpawnerSystem>().update(entityManager, assetBank);
     entityManager->getSystem<MovementSystem>().update(deltaTime);
     entityManager->getSystem<KeyboardControllerSystem>().update();
-    entityManager->getSystem<AnimationSystem>().update(deltaTime);
+    entityManager->getSystem<AnimationSystem>().update();
     entityManager->getSystem<CollisionSystem>().update(entityManager, eventBus);
+    entityManager->getSystem<BoundsSystem>().update(entityManager, eventBus);
     Logger::log(std::to_string(entityManager->getEntityFromTag("player").getComponent<HealthComponent>().health));
     Logger::log(std::to_string(entityManager->getNumEntities()));
 }

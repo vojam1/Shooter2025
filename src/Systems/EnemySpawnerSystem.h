@@ -27,6 +27,8 @@ public:
                 zombie.addComponent<CollisionSphereComponent>(0.5f, 5, 5, RED);
                 zombie.addComponent<RigidbodyComponent>(Vector3{ 0.0f, 0.0f, 1.0f }, 5.0f);
                 zombie.addComponent<HealthComponent>();
+                zombie.addComponent<AnimationComponent>(assetBank->getModelAnimation("zombie_animation").first,
+                    assetBank->getModelAnimation("zombie_animation").second, 7);
             }
             timeSinceLastSpawn = GetTime();
         }
