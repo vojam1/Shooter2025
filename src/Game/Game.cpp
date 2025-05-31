@@ -58,9 +58,12 @@ void Game::setup() {
     entityManager->addSystem<BoundsSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
-    assetBank->addModel("zombie_model", "../res/Models/Zombie/Zombie.glb");
-    assetBank->addModelAnimation("zombie_animation", "../res/Models/Zombie/Zombie.glb");
-    assetBank->addModel("bullet_model", "../res/Models/Bullet/Bullet.glb");
+    assetBank->addModel("zombie_model", "../res/Models/Enemy/Zombie.glb");
+    assetBank->addModelAnimation("zombie_animation", "../res/Models/Enemy/Zombie.glb");
+    assetBank->addModel("bullet_model", "../res/Models/Projectile/Bullet.glb");
+    assetBank->addModel("missile_model", "../res/Models/Projectile/Missile.glb");
+    assetBank->addModel("arrow_model", "../res/Models/Projectile/Arrow.glb");
+
 
     camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
@@ -76,6 +79,7 @@ void Game::setup() {
     player.addComponent<KeyboardControllerComponent>();
     player.addComponent<HealthComponent>();
     player.addComponent<CollisionSphereComponent>(0.75f, 5, 5, GREEN);
+    player.addComponent<ProjectileComponent>();
 
     Entity ground = entityManager->createEntity();
     ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
@@ -142,7 +146,7 @@ void Game::processInput() {
         isDebug = !isDebug;
     }
     if (IsKeyPressed(KEY_ENTER)) {
-        ProjectileSystem::fireProjectile(entityManager->getEntityFromTag("player"), entityManager, assetBank);
+        entityManager->getSystem<ProjectileSystem>().fireProjectile(entityManager, assetBank);
     }
 }
 

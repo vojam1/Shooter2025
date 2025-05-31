@@ -10,24 +10,31 @@
 #include "../Components/MeshComponent.h"
 #include "../Components/RigidbodyComponent.h"
 #include "../Components/TransformComponent.h"
+#include "../Components/ProjectileComponent.h"
 #include "../ECS/ECS.h"
 
 class ProjectileSystem : public System {
 public:
-    ProjectileSystem() = default;
+    ProjectileSystem() {
+        requireComponent<ProjectileComponent>();
+    }
 
-    static void fireProjectile(Entity& player, const UniqueRef<EntityManager>& entityManager, const UniqueRef<AssetBank>& assetBank) {
-        Entity bullet = entityManager->createEntity();
-        bullet.group("bullet");
+    void fireProjectile(const UniqueRef<EntityManager>& entityManager, const UniqueRef<AssetBank>& assetBank) {
+        for (auto& entity: getSystemEntities()) {
+            Entity bullet = entityManager->createEntity();
+            bullet.group("bullet");
 
-        auto& playerTransform = player.getComponent<TransformComponent>();
-        bullet.addComponent<TransformComponent>(Vector3(playerTransform.position.x, 0, playerTransform.position.z ),
-            Vector3(0.05f, 0.05f, 0.05f),
-            Vector3(0.0f, 1.0f, 0.0f),
-            180.f);
-        bullet.addComponent<RigidbodyComponent>(Vector3{0,0,-5.0f});
-        bullet.addComponent<MeshComponent>(assetBank->getModel("bullet_model"));
-        bullet.addComponent<CollisionSphereComponent>(0.5f, 5, 5);
+            auto& playerTransform = entity.getComponent<TransformComponent>();
+            auto& projectileComp = entity.getComponent<ProjectileComponent>();
+
+            bullet.addComponent<TransformComponent>(Vector3(playerTransform.position.x, 0, playerTransform.position.z ),
+                projectileComp.scale,
+                projectileComp.rotation,
+                projectileComp.angle);
+            bullet.addComponent<RigidbodyComponent>(projectileComp.velocity);
+            bullet.addComponent<MeshComponent>(assetBank->getModel(projectileComp.model));
+            bullet.addComponent<CollisionSphereComponent>(projectileComp.radius, 5, 5);
+        }
     }
 };
 

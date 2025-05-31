@@ -36,6 +36,7 @@ add_executable(Shooter2025 src/main.cpp
         src/Systems/CollisionShapesRenderSystem.h
         src/Systems/CollisionSystem.h
         src/Systems/BoundsSystem.h
+        src/Components/ProjectileComponent.h
 )
 
 include_directories("/usr/local/include")
