@@ -9,8 +9,7 @@
 #include "../Components/TransformComponent.h"
 #include "../ECS/ECS.h"
 #include "../EventBus/EventBus.h"
-#include "../Events/DamageEvent.h"
-#include "../Util/Debug.h"
+#include "../Events/CollisionEvent.h"
 
 class CollisionSystem : public System {
 public:
@@ -38,8 +37,7 @@ public:
                     bulletTransform.position,
                     bulletCollision.radius
                 )) {
-                    eventBus->emitEvent<DamageEvent>(enemy, 50);
-                    eventBus->emitEvent<DamageEvent>(bullet, 100);
+                    eventBus->emitEvent<CollisionEvent>(enemy, bullet);
                 }
             }
         }

@@ -6,9 +6,9 @@
 #define HEALTHCOMPONENT_H
 
 struct HealthComponent {
-    int health;
+    int16_t health;
 
-    explicit HealthComponent(const int health = 100) : health(health) {}
+    explicit HealthComponent(const int16_t health = 100) : health(health) {}
 };
 
 #endif //HEALTHCOMPONENT_H

@@ -14,6 +14,7 @@
 #include "../Components/RigidbodyComponent.h"
 #include "../Components/HealthComponent.h"
 #include "../Components/CollisionSphereComponent.h"
+#include "../Components/ProjectileShooterComponent.h"
 
 #include "../Systems/AnimationSystem.h"
 #include "../Systems/BoundsSystem.h"
@@ -79,7 +80,7 @@ void Game::setup() {
     player.addComponent<KeyboardControllerComponent>();
     player.addComponent<HealthComponent>();
     player.addComponent<CollisionSphereComponent>(0.75f, 5, 5, GREEN);
-    player.addComponent<ProjectileComponent>();
+    player.addComponent<ProjectileShooterComponent>("arrow");
 
     Entity ground = entityManager->createEntity();
     ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
@@ -148,6 +149,7 @@ void Game::processInput() {
     if (IsKeyPressed(KEY_ENTER)) {
         entityManager->getSystem<ProjectileSystem>().fireProjectile(entityManager, assetBank);
     }
+
 }
 
 void Game::unload() {
