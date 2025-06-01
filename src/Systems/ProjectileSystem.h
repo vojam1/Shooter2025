@@ -40,7 +40,7 @@ public:
             bullet.addComponent<MeshComponent>(assetBank->getModel(projectileComp.modelId));
             bullet.addComponent<CollisionSphereComponent>(projectileComp.radius, 5, 5);
             bullet.addComponent<ProjectileComponent>(projectileComp.tag, projectileComp.damage, projectileComp.selfDamage);
-
+            bullet.addComponent<HealthComponent>();
             lastSpawnTime = GetTime();
         }
     }

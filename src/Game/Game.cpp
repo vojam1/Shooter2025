@@ -27,6 +27,7 @@
 #include "../Systems/MovementSystem.h"
 #include "../Systems/KeyboardControllerSystem.h"
 #include "../Systems/ProjectileSystem.h"
+#include "../Systems/UIRenderSystem.h"
 
 Camera3D Game::camera = { 0 };
 
@@ -57,6 +58,7 @@ void Game::setup() {
     entityManager->addSystem<CollisionSystem>();
     entityManager->addSystem<ProjectileSystem>();
     entityManager->addSystem<BoundsSystem>();
+    entityManager->addSystem<UIRenderSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
     assetBank->addModel("zombie_model", "../res/Models/Enemy/Zombie.glb");
@@ -80,7 +82,7 @@ void Game::setup() {
     player.addComponent<KeyboardControllerComponent>();
     player.addComponent<HealthComponent>();
     player.addComponent<CollisionSphereComponent>(0.75f, 5, 5, GREEN);
-    player.addComponent<ProjectileShooterComponent>("arrow");
+    player.addComponent<ProjectileShooterComponent>("bullet");
 
     Entity ground = entityManager->createEntity();
     ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
@@ -135,6 +137,8 @@ void Game::render(){
 
     EndMode3D();
 
+    entityManager->getSystem<UIRenderSystem>().update(entityManager->getEntityFromTag("player"));
+
     if (isDebug) {
         entityManager->getSystem<DebugRenderSystem>().update();
     }
@@ -149,7 +153,15 @@ void Game::processInput() {
     if (IsKeyPressed(KEY_ENTER)) {
         entityManager->getSystem<ProjectileSystem>().fireProjectile(entityManager, assetBank);
     }
-
+    if (IsKeyPressed(KEY_ONE)) {
+        entityManager->getEntityFromTag("player").addComponent<ProjectileShooterComponent>("bullet");
+    }
+    if (IsKeyPressed(KEY_TWO)) {
+        entityManager->getEntityFromTag("player").addComponent<ProjectileShooterComponent>("arrow");
+    }
+    if (IsKeyPressed(KEY_THREE)) {
+        entityManager->getEntityFromTag("player").addComponent<ProjectileShooterComponent>("missile");
+    }
 }
 
 void Game::unload() {

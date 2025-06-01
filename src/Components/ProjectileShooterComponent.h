@@ -13,8 +13,8 @@ struct ProjectileShooterComponent {
     Vector3 rotation{};
     float angle;
     float radius;
-    int16_t damage;
-    int16_t selfDamage;
+    int32_t damage;
+    int32_t selfDamage;
     float fireRate;
 
     explicit ProjectileShooterComponent(const std::string& tag = "missile",
@@ -24,8 +24,8 @@ struct ProjectileShooterComponent {
         const Vector3& rotation = Vector3(0.0f, 0.0f, 0.0f),
         float angle = 0.0f,
         float radius = 0.5f,
-        int16_t damage = 0,
-        int16_t selfDamage = 0,
+        int32_t damage = 0,
+        int32_t selfDamage = 0,
         float fireRate = 1.0f)
     {
         this->tag = tag;
