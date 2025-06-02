@@ -41,10 +41,10 @@ struct ProjectileShooterComponent {
                 this->velocity = Vector3(0.0f, 0.0f, -5.0f);
                 this->rotation = Vector3(0.0f, 1.0f, 0.0f);
                 this->angle = 180.f;
-                this->radius = 0.5f;
-                this->damage = 25;
+                this->radius = 0.25f;
+                this->damage = 50;
                 this->selfDamage = 100;
-                this->fireRate = 0.25f;
+                this->fireRate = 0.05f;
                 break;
 
             case 2:
@@ -53,10 +53,10 @@ struct ProjectileShooterComponent {
                 this->velocity = Vector3(0.0f, 0.0f, -7.5f);
                 this->rotation = Vector3(0.0f, 1.0f, 0.0f);
                 this->angle = 90.f;
-                this->radius = radius;
+                this->radius = 0.25;
                 this->damage = 100;
                 this->selfDamage = 25;
-                this->fireRate = 1.0f;
+                this->fireRate = 0.25f;
                 break;
 
             case 3:
@@ -65,10 +65,10 @@ struct ProjectileShooterComponent {
                 this->velocity = Vector3(0.0f, 0.0f, -4.f);
                 this->rotation = Vector3(0.0f, 1.0f, 0.0f);
                 this->angle = 90.f;
-                this->radius = radius;
+                this->radius = 0.25;
                 this->damage = 100;
                 this->selfDamage = 100;
-                this->fireRate = 2.0f;
+                this->fireRate = 0.5f;
                 break;
 
             default:

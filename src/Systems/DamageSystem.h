@@ -18,27 +18,8 @@ public:
     }
 
     void subscribeToEvents(UniqueRef<EventBus>& eventBus) {
-        eventBus->subscribeToEvent<CollisionEvent>(this, &DamageSystem::onCollision);
+        //eventBus->subscribeToEvent<CollisionEvent>(this, &DamageSystem::onCollision);
         eventBus->subscribeToEvent<DamageEvent>(this, &DamageSystem::onDamage);
-    }
-
-    void onCollision(CollisionEvent& event) {
-        const auto& entity = event.a;
-        auto& entityHealth = entity.getComponent<HealthComponent>();
-        const auto& projectile = event.b;
-        auto& projectileHealth = projectile.getComponent<HealthComponent>();
-        const std::string& tag = projectile.getComponent<ProjectileComponent>().tag;
-
-        entityHealth.health -= projectile.getComponent<ProjectileComponent>().damage;
-        projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
-
-        if (entityHealth.health <= 0) {
-            entity.kill();
-        }
-
-        if (projectileHealth.health <= 0) {
-            projectile.kill();
-        }
     }
 
     void onDamage(DamageEvent& event) {

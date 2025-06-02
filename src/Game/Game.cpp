@@ -17,7 +17,7 @@
 #include "../Components/ProjectileShooterComponent.h"
 
 #include "../Systems/AnimationSystem.h"
-#include "../Systems/BoundsSystem.h"
+#include "../Systems/CollisionResolutionSystem.h"
 #include "../Systems/CollisionShapesRenderSystem.h"
 #include "../Systems/CollisionSystem.h"
 #include "../Systems/DamageSystem.h"
@@ -27,6 +27,7 @@
 #include "../Systems/MovementSystem.h"
 #include "../Systems/KeyboardControllerSystem.h"
 #include "../Systems/ProjectileSystem.h"
+#include "../Systems/ScoreSystem.h"
 #include "../Systems/UIRenderSystem.h"
 
 Camera3D Game::camera = { 0 };
@@ -57,8 +58,9 @@ void Game::setup() {
     entityManager->addSystem<CollisionShapesRenderSystem>();
     entityManager->addSystem<CollisionSystem>();
     entityManager->addSystem<ProjectileSystem>();
-    entityManager->addSystem<BoundsSystem>();
     entityManager->addSystem<UIRenderSystem>();
+    entityManager->addSystem<CollisionResolutionSystem>();
+    entityManager->addSystem<ScoreSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
     assetBank->addModel("zombie_model", "../res/Models/Enemy/Zombie.glb");
@@ -83,6 +85,7 @@ void Game::setup() {
     player.addComponent<HealthComponent>();
     player.addComponent<CollisionSphereComponent>(0.75f, 5, 5, GREEN);
     player.addComponent<ProjectileShooterComponent>("bullet");
+    player.addComponent<ScoreTrackerComponent>();
 
     Entity ground = entityManager->createEntity();
     ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
@@ -108,6 +111,8 @@ void Game::update() {
 
     eventBus->Reset();
     entityManager->getSystem<DamageSystem>().subscribeToEvents(eventBus);
+    entityManager->getSystem<CollisionResolutionSystem>().subscribeToEvents(eventBus);
+    entityManager->getSystem<ScoreSystem>().subscribeToEvents(eventBus);
 
     entityManager->update();
     entityManager->getSystem<EnemySpawnerSystem>().update(entityManager, assetBank);
@@ -115,8 +120,6 @@ void Game::update() {
     entityManager->getSystem<KeyboardControllerSystem>().update();
     entityManager->getSystem<AnimationSystem>().update();
     entityManager->getSystem<CollisionSystem>().update(entityManager, eventBus);
-    entityManager->getSystem<BoundsSystem>().update(entityManager, eventBus);
-    Logger::log(std::to_string(entityManager->getEntityFromTag("player").getComponent<HealthComponent>().health));
     Logger::log(std::to_string(entityManager->getNumEntities()));
 }
 

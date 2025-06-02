@@ -10,6 +10,7 @@
 #include "../ECS/ECS.h"
 #include "../EventBus/EventBus.h"
 #include "../Events/CollisionEvent.h"
+#include "../Events/DamageEvent.h"
 
 class CollisionSystem : public System {
 public:
@@ -27,6 +28,11 @@ public:
             auto& enemyTransform = enemy.getComponent<TransformComponent>();
             auto& enemyCollision = enemy.getComponent<CollisionSphereComponent>();
 
+            if (enemyTransform.position.z >= 5 || enemyTransform.position.z <= -40) {
+                eventBus->emitEvent<DamageEvent>(player, 10);
+                eventBus->emitEvent<DamageEvent>(enemy, 100);
+            }
+
             for (auto& bullet: bullets) {
                 auto& bulletTransform = bullet.getComponent<TransformComponent>();
                 auto& bulletCollision = bullet.getComponent<CollisionSphereComponent>();
@@ -37,7 +43,25 @@ public:
                     bulletTransform.position,
                     bulletCollision.radius
                 )) {
-                    eventBus->emitEvent<CollisionEvent>(enemy, bullet);
+                    // If the bullet is a missile increase it's radius on collision and check if any
+                    // of the remaining entities are in it's area
+                    // if (bullet.getComponent<ProjectileComponent>().tag == "missile") {
+                    //     bulletCollision.radius = 5.0f;
+                    //     for (auto& enemy2: enemies) {
+                    //         auto& enemyTransform2 = enemy2.getComponent<TransformComponent>();
+                    //         auto& enemyCollision2 = enemy2.getComponent<CollisionSphereComponent>();
+                    //         if (CheckCollisionSpheres(
+                    //         enemyTransform2.position,
+                    //         enemyCollision2.radius,
+                    //         bulletTransform.position,
+                    //         bulletCollision.radius
+                    //             )) {
+                    //             eventBus->emitEvent<CollisionEvent>(enemy, bullet);
+                    //         }
+                    //     }
+                    // } else {
+                        eventBus->emitEvent<CollisionEvent>(enemy, bullet);
+                    //}
                 }
             }
         }
