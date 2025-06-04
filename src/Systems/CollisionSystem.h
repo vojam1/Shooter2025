@@ -43,45 +43,10 @@ public:
                     bulletTransform.position,
                     bulletCollision.radius
                 )) {
-                    // If the bullet is a missile increase it's radius on collision and check if any
-                    // of the remaining entities are in it's area
-                    // if (bullet.getComponent<ProjectileComponent>().tag == "missile") {
-                    //     bulletCollision.radius = 5.0f;
-                    //     for (auto& enemy2: enemies) {
-                    //         auto& enemyTransform2 = enemy2.getComponent<TransformComponent>();
-                    //         auto& enemyCollision2 = enemy2.getComponent<CollisionSphereComponent>();
-                    //         if (CheckCollisionSpheres(
-                    //         enemyTransform2.position,
-                    //         enemyCollision2.radius,
-                    //         bulletTransform.position,
-                    //         bulletCollision.radius
-                    //             )) {
-                    //             eventBus->emitEvent<CollisionEvent>(enemy, bullet);
-                    //         }
-                    //     }
-                    // } else {
-                        eventBus->emitEvent<CollisionEvent>(enemy, bullet);
-                    //}
+                    eventBus->emitEvent<CollisionEvent>(enemy, bullet);
                 }
             }
         }
-        // auto& player = entityManager->getEntityFromTag("player");
-        // const auto& playerTransform = player.getComponent<TransformComponent>();
-        // const auto& playerCollisionSphere = player.getComponent<CollisionSphereComponent>();
-        //
-        // for (auto& entity : getSystemEntities()) {
-        //     if (entity == player) { continue; }
-        //     const auto& entityTransform = entity.getComponent<TransformComponent>();
-        //     auto& entityCollisionSphere = entity.getComponent<CollisionSphereComponent>();
-        //
-        //     if (CheckCollisionSpheres(playerTransform.position, playerCollisionSphere.radius,
-        //        entityTransform.position, entityCollisionSphere.radius)) {
-        //        eventBus->emitEvent<DamageEvent>(player, 10);
-        //     }
-        //     if (entityTransform.position.z >= 8) {
-        //         entity.kill();
-        //     }
-        // }
     }
 };
 

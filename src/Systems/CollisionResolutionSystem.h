@@ -11,6 +11,7 @@
 
 #include "../Components/HealthComponent.h"
 #include "../Components/ProjectileComponent.h"
+#include "../Components/ScoreTrackerComponent.h"
 
 class CollisionResolutionSystem : public System {
 public:
@@ -27,11 +28,30 @@ public:
         auto& projectileHealth = projectile.getComponent<HealthComponent>();
         const std::string& tag = projectile.getComponent<ProjectileComponent>().tag;
 
-        entityHealth.health -= projectile.getComponent<ProjectileComponent>().damage;
-        projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
+        if (projectile.getComponent<ProjectileComponent>().tag == "missile") {
+            auto& projectileTransorm = projectile.getComponent<TransformComponent>();
+            auto& projectileCollisoin = projectile.getComponent<CollisionSphereComponent>();
 
+            projectileCollisoin.radius = 10.0f;
+            for (auto& enemy: entity.entityManager->getEntitiesInGroup("enemy")) {
+                auto& enemyTransform = enemy.getComponent<TransformComponent>();
+                auto& enemyCollision = enemy.getComponent<CollisionSphereComponent>();
+                if (CheckCollisionSpheres(
+                enemyTransform.position,
+                enemyCollision.radius,
+                projectileTransorm.position,
+                projectileCollisoin.radius)) {
+                        enemy.getComponent<HealthComponent>().health -= projectile.getComponent<ProjectileComponent>().damage;
+                        projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
+                    }
+            }
+        } else {
+            entityHealth.health -= projectile.getComponent<ProjectileComponent>().damage;
+            projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
+        }
 
         if (entityHealth.health <= 0) {
+            entity.entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score += 100;
             entity.kill();
         }
 

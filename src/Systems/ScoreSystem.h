@@ -24,7 +24,7 @@ public:
     void onCollision(CollisionEvent& event) {
         for (auto& entity: getSystemEntities()) {
             if (event.a.getComponent<HealthComponent>().health <= 0) {
-                entity.getComponent<ScoreTrackerComponent>().score += 100;
+                //entity.getComponent<ScoreTrackerComponent>().score += 100;
             }
         }
     }
