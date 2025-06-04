@@ -37,17 +37,18 @@ Game::Game() {
     assetBank = std::make_unique<AssetBank>();
     eventBus = std::make_unique<EventBus>();
     isDebug = false;
+    isInit = false;
 
-    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Soulslike2025");
+    InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Shoot'Em Up!");
     SetTargetFPS(60);
     ToggleFullscreen();
+    DisableCursor();
+
 
     skyTexture = LoadTexture("../res/Textures/sky.png");
 }
 
 void Game::setup() {
-    DisableCursor();
-
     entityManager->addSystem<RenderSystem>();
     entityManager->addSystem<MovementSystem>();
     entityManager->addSystem<KeyboardControllerSystem>();
@@ -93,13 +94,54 @@ void Game::setup() {
 
 }
 
+bool Game::showMenu() const {
+    if (IsKeyPressed(KEY_ENTER)) {
+        return false;
+    }
+    BeginDrawing();
+    ClearBackground(RAYWHITE);
+    DrawText("Zombie Shoot'Em Up!", SCREEN_WIDTH/10, SCREEN_HEIGHT/3, 150, GREEN);
+    DrawText("To start press ENTER...", SCREEN_WIDTH/2, SCREEN_HEIGHT/2, 50, GRAY);
+    EndDrawing();
+    return true;
+}
+
+bool Game::showGameOver() const {
+    while (true) {
+        if (IsKeyPressed(KEY_ENTER)) return true;
+        if (IsKeyPressed(KEY_ESCAPE)) return false;
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawText("Game Over!", 400, 400, 200, RED);
+        const int32_t score = entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score;
+        std::cout << score << std::endl;
+        const std::string scoreStr = "Score: " + std::to_string(score);
+        DrawText(scoreStr.c_str(), 750, 650, 75, BLACK);
+        DrawText("Press ENTER to play again or ESCAPE to exit...", 1000, 1000, 35, GRAY);
+        EndDrawing();
+    }
+}
+
 void Game::run(){
     setup();
     while (!WindowShouldClose())        // Detect window close button or ESC key
     {
+        if (!isInit && showMenu()) {
+            continue;
+        }
+        isInit = true;
         Logger::log("FPS= " + std::to_string(GetFPS()));
         processInput();
         update();
+        if (entityManager->getEntityFromTag("player").getComponent<HealthComponent>().health <= 0) {
+            if (showGameOver()) {
+                entityManager = std::make_unique<EntityManager>();
+                setup();
+            } else {
+                break;
+            }
+            continue;
+        }
         render();
     }
     unload();

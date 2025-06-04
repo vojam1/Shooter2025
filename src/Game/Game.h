@@ -21,6 +21,7 @@ private:
     const uint16_t SCREEN_WIDTH = 1920;
     const uint16_t SCREEN_HEIGHT = 1080;
     bool isDebug;
+    bool isInit;
 
     Texture2D skyTexture{};
 
@@ -30,6 +31,9 @@ private:
 
     void setup();
     void unload();
+
+    bool showMenu() const;
+    bool showGameOver() const;
 
     double timeSinceLastSpawn = 0.0;
     double enemySpawnTime = 2.0;

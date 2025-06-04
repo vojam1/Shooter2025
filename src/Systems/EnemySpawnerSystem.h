@@ -13,13 +13,13 @@
 class EnemySpawnerSystem: public System {
 public:
     double timeSinceLastSpawn = 0;
-    double spawnTime = 2.0;
+    double spawnTime = 1.5;
 
     void update(const UniqueRef<EntityManager>& entityManager, const UniqueRef<AssetBank>& assetBank) {
         if (GetTime() - timeSinceLastSpawn > spawnTime) {
             constexpr float posArray[3] = {1.5f, 0.0f, -1.5f};
             const float xPos = posArray[GetRandomValue(0, 2)];
-            for (int i=0; i<GetRandomValue(4,7); i++) {
+            for (int i=0; i<GetRandomValue(5,7); i++) {
                 Entity zombie = entityManager->createEntity();
                 zombie.group("enemy");
                 zombie.addComponent<TransformComponent>(Vector3{ xPos, 0.0f, -30.0f - static_cast<float>(i) }, Vector3{ 0.35f, 0.35f, 0.35f });
