@@ -26,6 +26,7 @@
 #include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/KeyboardControllerSystem.h"
+#include "../Systems/MysteryBoxSystem.h"
 #include "../Systems/ProjectileSystem.h"
 #include "../Systems/UIRenderSystem.h"
 
@@ -60,6 +61,7 @@ void Game::setup() {
     entityManager->addSystem<ProjectileSystem>();
     entityManager->addSystem<UIRenderSystem>();
     entityManager->addSystem<CollisionResolutionSystem>();
+    entityManager->addSystem<MysteryBoxSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
     assetBank->addModel("zombie_model", "../res/Models/Enemy/Zombie.glb");
@@ -67,6 +69,7 @@ void Game::setup() {
     assetBank->addModel("bullet_model", "../res/Models/Projectile/Bullet.glb");
     assetBank->addModel("missile_model", "../res/Models/Projectile/Missile.glb");
     assetBank->addModel("arrow_model", "../res/Models/Projectile/Arrow.glb");
+    assetBank->addModel("box_model", "../res/Models/Objects/Box.glb");
 
 
     camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
@@ -151,6 +154,7 @@ void Game::update() {
     eventBus->Reset();
     entityManager->getSystem<DamageSystem>().subscribeToEvents(eventBus);
     entityManager->getSystem<CollisionResolutionSystem>().subscribeToEvents(eventBus);
+    entityManager->getSystem<MysteryBoxSystem>().subscribeToEvents(eventBus);
 
     entityManager->update();
     entityManager->getSystem<EnemySpawnerSystem>().update(entityManager, assetBank);
@@ -159,6 +163,11 @@ void Game::update() {
     entityManager->getSystem<AnimationSystem>().update();
     entityManager->getSystem<CollisionSystem>().update(entityManager, eventBus);
     Logger::log(std::to_string(entityManager->getNumEntities()));
+
+    if (GetTime() - timeSinceLastLevel > 3.0) {
+        entityManager->getSystem<EnemySpawnerSystem>().level += 1;
+        timeSinceLastLevel = GetTime();
+    }
 }
 
 

@@ -38,6 +38,8 @@ private:
     double timeSinceLastSpawn = 0.0;
     double enemySpawnTime = 2.0;
 
+    double timeSinceLastLevel = 0.0;
+
     static Camera3D camera;
     UniqueRef<EntityManager> entityManager;
     UniqueRef<AssetBank> assetBank;

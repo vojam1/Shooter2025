@@ -19,7 +19,12 @@ public:
     double lastSpawnTime = 0.0;
 
     int32_t bulletCharges = 2000000000;
+    int32_t bulletDamage = 25;
+
     int32_t arrowCharges = 3;
+    int32_t arrowDamage = 100;
+    int32_t arrowSelfDamage = 25;
+
     int32_t missileCharges = 1;
 
     ProjectileSystem() {
@@ -38,6 +43,17 @@ public:
         }
     }
 
+    int32_t getDamage(const std::string& tag) {
+        if (tag == "bullet") {
+            return bulletDamage;
+        }
+        if (tag == "arrow") {
+            return arrowDamage;
+        }
+        if (tag == "missile") {
+            return missileCharges;
+        }
+    }
     void fireProjectile(const UniqueRef<EntityManager>& entityManager, const UniqueRef<AssetBank>& assetBank) {
         for (auto& entity: getSystemEntities()) {
             auto& projectileComp = entity.getComponent<ProjectileShooterComponent>();
@@ -71,7 +87,7 @@ public:
             bullet.addComponent<RigidbodyComponent>(projectileComp.velocity);
             bullet.addComponent<MeshComponent>(assetBank->getModel(projectileComp.modelId));
             bullet.addComponent<CollisionSphereComponent>(projectileComp.radius, 5, 5);
-            bullet.addComponent<ProjectileComponent>(projectileComp.tag, projectileComp.damage, projectileComp.selfDamage);
+            bullet.addComponent<ProjectileComponent>(projectileComp.tag, getDamage(projectileComp.tag), projectileComp.tag == "arrow" ? arrowSelfDamage : projectileComp.selfDamage);
             bullet.addComponent<HealthComponent>();
             lastSpawnTime = GetTime();
         }
