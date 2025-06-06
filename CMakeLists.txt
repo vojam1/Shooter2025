@@ -41,7 +41,6 @@ add_executable(Shooter2025 src/main.cpp
         src/Systems/UIRenderSystem.h
         src/Systems/CollisionResolutionSystem.h
         src/Components/ScoreTrackerComponent.h
-        src/Systems/ScoreSystem.h
 )
 
 include_directories("/usr/local/include")

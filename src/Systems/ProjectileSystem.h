@@ -18,8 +18,24 @@ class ProjectileSystem : public System {
 public:
     double lastSpawnTime = 0.0;
 
+    int32_t bulletCharges = 2000000000;
+    int32_t arrowCharges = 3;
+    int32_t missileCharges = 1;
+
     ProjectileSystem() {
         requireComponent<ProjectileShooterComponent>();
+    }
+
+    void addCharge(const std::string& tag, int32_t charge) {
+        if (tag == "bullet") {
+            bulletCharges += charge;
+        }
+        else if (tag == "arrow") {
+            arrowCharges += charge;
+        }
+        else if (tag == "missile") {
+            missileCharges += charge;
+        }
     }
 
     void fireProjectile(const UniqueRef<EntityManager>& entityManager, const UniqueRef<AssetBank>& assetBank) {
@@ -27,6 +43,22 @@ public:
             auto& projectileComp = entity.getComponent<ProjectileShooterComponent>();
 
             if (GetTime() - lastSpawnTime <= projectileComp.fireRate) { continue; }
+
+            if (projectileComp.tag == "bullet") {
+                if (bulletCharges <= 0)
+                    continue;
+                bulletCharges--;
+            }
+            if (projectileComp.tag == "arrow") {
+                if (arrowCharges <= 0)
+                    continue;
+                arrowCharges--;
+            }
+            if (projectileComp.tag == "missile") {
+                if (missileCharges <= 0)
+                    continue;
+                missileCharges--;
+            }
 
             Entity bullet = entityManager->createEntity();
             bullet.group("bullet");

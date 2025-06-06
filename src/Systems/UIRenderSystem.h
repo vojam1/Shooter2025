@@ -5,26 +5,58 @@
 #ifndef UIRENDERSYSTEM_H
 #define UIRENDERSYSTEM_H
 
+#include <charconv>
+
 #include "../ECS/ECS.h"
 #include <raylib.h>
 
 class UIRenderSystem: public System {
 public:
-    UIRenderSystem() = default;
+    Texture bulletTexture {};
+    Texture arrowTexture {};
+    Texture missileTexture {};
 
-    static void drawWeaponUI(const Entity& player) {
-        constexpr auto weaponDstRect = Rectangle(50.0f, SCREEN_HEIGHT - 200.f, 150.0f, 150.0f);
+    UIRenderSystem() {
+        bulletTexture = LoadTexture("../res/Textures/bullet.png");
+        arrowTexture = LoadTexture("../res/Textures/arrow.png");
+        missileTexture = LoadTexture("../res/Textures/missile.png");
+    };
 
-        DrawRectangleRec(weaponDstRect, Color(0, 0, 0, 100));
+    void drawWeaponUI(const Entity& player) const {
+        std::string tag = player.getComponent<ProjectileShooterComponent>().tag;
 
-        const std::string& tag = player.getComponent<ProjectileShooterComponent>().tag;
+        int32_t bulletCharges = player.entityManager->getSystem<ProjectileSystem>().bulletCharges;
+        int32_t arrowCharges = player.entityManager->getSystem<ProjectileSystem>().arrowCharges;
+        int32_t missileCharges = player.entityManager->getSystem<ProjectileSystem>().missileCharges;
 
-        const std::string texPath = "../res/Textures/" + tag + ".png";
-        const Texture texture = LoadTexture(texPath.c_str());
+        Color bulletColor = Color(0,0,0,50);
+        Color arrowColor = Color(0,0,0,50);
+        Color missileColor = Color(0,0,0,50);
 
-        DrawTexturePro(texture, Rectangle(0,0,150,150),
-            weaponDstRect, Vector2(0,0), 0, WHITE);
+        if (tag == "bullet") {
+            bulletColor = Color(0,255,0, 150);
+        } else if (tag == "arrow") {
+            arrowColor = Color(0,0,255, 150);
+        } else if (tag == "missile") {
+            missileColor = Color(255,0,0, 150);
+        }
 
+        DrawRectangle(30.f, SCREEN_HEIGHT- 200.f, 150.f, 150.f, bulletColor);
+        DrawRectangle(190.f, SCREEN_HEIGHT- 200.f, 150.f, 150.f, arrowColor);
+        DrawRectangle(350.f, SCREEN_HEIGHT- 200.f, 150.f, 150.f, missileColor);
+
+        DrawTexturePro(bulletTexture, Rectangle(0,0,150,150),
+        Rectangle(30.f, SCREEN_HEIGHT-200.f, 150.f, 150.f), Vector2(0,0), 0, WHITE);
+
+        DrawTexturePro(arrowTexture, Rectangle(0,0,150,150),
+    Rectangle(190.f, SCREEN_HEIGHT-200.f, 150.f, 150.f), Vector2(0,0), 0, WHITE);
+
+        DrawTexturePro(missileTexture, Rectangle(0,0,150,150),
+    Rectangle(350.f, SCREEN_HEIGHT-200.f, 150.f, 150.f), Vector2(0,0), 0, WHITE);
+
+        //DrawText(std::to_string(bulletCharges).c_str(), 35.f, SCREEN_HEIGHT-200.f, 40, WHITE);
+        DrawText(std::to_string(arrowCharges).c_str(), 195.f, SCREEN_HEIGHT-200.f,  40, WHITE);
+        DrawText(std::to_string(missileCharges).c_str(), 355, SCREEN_HEIGHT - 200.f, 40, WHITE);
     }
 
     static void drawPlayerUI(const Entity& player) {

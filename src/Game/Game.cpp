@@ -27,7 +27,6 @@
 #include "../Systems/MovementSystem.h"
 #include "../Systems/KeyboardControllerSystem.h"
 #include "../Systems/ProjectileSystem.h"
-#include "../Systems/ScoreSystem.h"
 #include "../Systems/UIRenderSystem.h"
 
 Camera3D Game::camera = { 0 };
@@ -61,7 +60,6 @@ void Game::setup() {
     entityManager->addSystem<ProjectileSystem>();
     entityManager->addSystem<UIRenderSystem>();
     entityManager->addSystem<CollisionResolutionSystem>();
-    entityManager->addSystem<ScoreSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
     assetBank->addModel("zombie_model", "../res/Models/Enemy/Zombie.glb");
@@ -114,7 +112,6 @@ bool Game::showGameOver() const {
         ClearBackground(RAYWHITE);
         DrawText("Game Over!", 400, 400, 200, RED);
         const int32_t score = entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score;
-        std::cout << score << std::endl;
         const std::string scoreStr = "Score: " + std::to_string(score);
         DrawText(scoreStr.c_str(), 750, 650, 75, BLACK);
         DrawText("Press ENTER to play again or ESCAPE to exit...", 1000, 1000, 35, GRAY);
@@ -154,7 +151,6 @@ void Game::update() {
     eventBus->Reset();
     entityManager->getSystem<DamageSystem>().subscribeToEvents(eventBus);
     entityManager->getSystem<CollisionResolutionSystem>().subscribeToEvents(eventBus);
-    entityManager->getSystem<ScoreSystem>().subscribeToEvents(eventBus);
 
     entityManager->update();
     entityManager->getSystem<EnemySpawnerSystem>().update(entityManager, assetBank);
