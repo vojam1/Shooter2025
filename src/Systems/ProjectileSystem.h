@@ -26,6 +26,7 @@ public:
     int32_t arrowSelfDamage = 25;
 
     int32_t missileCharges = 1;
+    int32_t missileDamage = 100;
 
     ProjectileSystem() {
         requireComponent<ProjectileShooterComponent>();
@@ -51,8 +52,9 @@ public:
             return arrowDamage;
         }
         if (tag == "missile") {
-            return missileCharges;
+            return missileDamage;
         }
+        return 0;
     }
     void fireProjectile(const UniqueRef<EntityManager>& entityManager, const UniqueRef<AssetBank>& assetBank) {
         for (auto& entity: getSystemEntities()) {

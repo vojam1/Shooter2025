@@ -5,6 +5,7 @@
 #ifndef ENEMYSPAWNERSYSTEM_H
 #define ENEMYSPAWNERSYSTEM_H
 
+#include "../Components/HealthRenderComponent.h"
 #include "../ECS/ECS.h"
 #include "../Components/TransformComponent.h"
 #include "../Components/RigidbodyComponent.h"
@@ -22,7 +23,7 @@ public:
         if (GetTime() - timeSinceLastSpawn > spawnTime) {
             constexpr float posArray[3] = {1.5f, 0.0f, -1.5f};
             const float xPos = posArray[GetRandomValue(0, 2)];
-            for (int i=0; i<GetRandomValue(1,7); i++) {
+            for (int i=0; i<GetRandomValue(1,3); i++) {
                 bool spawnBox = GetRandomValue(0,10) == 5;
                 if (spawnBox) {
                     Entity box = entityManager->createEntity();
@@ -41,6 +42,7 @@ public:
                 zombie.addComponent<CollisionSphereComponent>(0.5f, 5, 5, RED);
                 zombie.addComponent<RigidbodyComponent>(Vector3{ 0.0f, 0.0f, 1.0f }, 5.0f);
                 zombie.addComponent<HealthComponent>();
+                zombie.addComponent<HealthRenderComponent>();
                 zombie.addComponent<AnimationComponent>(assetBank->getModelAnimation("zombie_animation").first,
                     assetBank->getModelAnimation("zombie_animation").second, 7);
                 timeSinceLastSpawn = GetTime();

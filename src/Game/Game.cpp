@@ -23,6 +23,7 @@
 #include "../Systems/DamageSystem.h"
 #include "../Systems/DebugRenderSystem.h"
 #include "../Systems/EnemySpawnerSystem.h"
+#include "../Systems/HealthRenderSystem.h"
 #include "../Systems/RenderSystem.h"
 #include "../Systems/MovementSystem.h"
 #include "../Systems/KeyboardControllerSystem.h"
@@ -62,6 +63,7 @@ void Game::setup() {
     entityManager->addSystem<UIRenderSystem>();
     entityManager->addSystem<CollisionResolutionSystem>();
     entityManager->addSystem<MysteryBoxSystem>();
+    entityManager->addSystem<HealthRenderSystem>();
 
     assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
     assetBank->addModel("zombie_model", "../res/Models/Enemy/Zombie.glb");
@@ -181,6 +183,7 @@ void Game::render(){
     BeginMode3D(camera);
 
         entityManager->getSystem<RenderSystem>().update(camera);
+
         if (isDebug) {
             entityManager->getSystem<CollisionShapesRenderSystem>().update();
         }
@@ -188,6 +191,8 @@ void Game::render(){
     EndMode3D();
 
     entityManager->getSystem<UIRenderSystem>().update(entityManager->getEntityFromTag("player"));
+    entityManager->getSystem<HealthRenderSystem>().update(camera);
+
 
     if (isDebug) {
         entityManager->getSystem<DebugRenderSystem>().update();
