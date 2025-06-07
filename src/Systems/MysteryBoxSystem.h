@@ -22,7 +22,7 @@ public:
     void onDestroy(MysteryBoxEvent& e) {
         Entity& box = e.box;
         auto& projectileSystem = box.entityManager->getSystem<ProjectileSystem>();
-        int32_t randomNum = GetRandomValue(1,4);
+        int32_t randomNum = GetRandomValue(1,5);
         switch (randomNum) {
             case 1:
                 projectileSystem.addCharge("missile", 1);
@@ -50,6 +50,9 @@ public:
                 } else {
                     box.entityManager->getSystem<UIRenderSystem>().render("+10 DAMAGE", box.getComponent<TransformComponent>().position);
                 }
+                break;
+            case 5:
+                box.entityManager->getSystem<EnemySpawnerSystem>().spawnBarrier(box);
                 break;
             default:
                 break;

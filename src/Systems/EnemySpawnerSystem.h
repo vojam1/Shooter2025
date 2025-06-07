@@ -17,6 +17,12 @@ public:
     double timeSinceLastSpawn = 0;
     double spawnTime = 0;
 
+    std::vector<Entity> barriers {};
+
+    void spawnBarrier(Entity& box) {
+        barriers.push_back(box);
+    }
+
     void update(const UniqueRef<EntityManager>& entityManager, const UniqueRef<AssetBank>& assetBank) {
         spawnTime = 2.5f - (static_cast<float>(level) * 0.5f);
         spawnTime = spawnTime <= 0.5f ? 0.5f : spawnTime;
@@ -48,6 +54,17 @@ public:
                 timeSinceLastSpawn = GetTime();
             }
         }
+        for (int i=0; i<barriers.size(); i++) {
+            Entity barrier = entityManager->createEntity();
+            barrier.group("barrier");
+            barrier.addComponent<TransformComponent>(barriers[i].getComponent<TransformComponent>().position,
+                Vector3(0.5f, 0.5f, 0.5f));
+            barrier.addComponent<MeshComponent>(assetBank->getModel("barrier_model"));
+            barrier.addComponent<CollisionSphereComponent>(0.5f, 5, 5, PURPLE);
+            barrier.addComponent<HealthComponent>();
+            barrier.addComponent<HealthRenderComponent>();
+        }
+        barriers.clear();
     }
 };
 

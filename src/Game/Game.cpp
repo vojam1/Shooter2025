@@ -72,6 +72,7 @@ void Game::setup() {
     assetBank->addModel("missile_model", "../res/Models/Projectile/Missile.glb");
     assetBank->addModel("arrow_model", "../res/Models/Projectile/Arrow.glb");
     assetBank->addModel("box_model", "../res/Models/Objects/Box.glb");
+    assetBank->addModel("barrier_model", "../res/Models/Objects/Barrier.glb");
 
 
     camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
