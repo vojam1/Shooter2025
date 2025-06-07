@@ -16,11 +16,13 @@ public:
     Texture arrowTexture {};
     Texture missileTexture {};
 
+    std::vector<std::pair<std::pair<std::string, Vector3>, double>> renderList {};
+
     UIRenderSystem() {
         bulletTexture = LoadTexture("../res/Textures/bullet.png");
         arrowTexture = LoadTexture("../res/Textures/arrow.png");
         missileTexture = LoadTexture("../res/Textures/missile.png");
-    };
+    }
 
     void drawWeaponUI(const Entity& player) const {
         std::string tag = player.getComponent<ProjectileShooterComponent>().tag;
@@ -72,9 +74,27 @@ public:
 
     }
 
-    void update(const Entity& player) {
+    void update(const Entity& player, Camera3D& camera) {
         drawPlayerUI(player);
         drawWeaponUI(player);
+
+        for (int i=0; i < renderList.size(); i++) {
+            if (renderList[i].second > 0.0) {
+                const char* text = renderList[i].first.first.c_str();
+                Vector3& worldPosition = renderList[i].first.second;
+                Vector2 position = GetWorldToScreen(worldPosition, camera);
+                std::cout << text << std::endl;
+                DrawText(text, position.x, position.y, 20, GREEN);
+                worldPosition.y += 0.01;
+                renderList[i].second -= 0.1;
+            } else {
+                renderList.erase(renderList.begin() + i);
+            }
+        }
+    }
+
+    void render(const std::string& text, Vector3 position) {
+        renderList.emplace_back(std::make_pair(text, position), 5.0);
     }
 };
 

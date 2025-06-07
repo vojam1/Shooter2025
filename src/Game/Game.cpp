@@ -190,7 +190,7 @@ void Game::render(){
 
     EndMode3D();
 
-    entityManager->getSystem<UIRenderSystem>().update(entityManager->getEntityFromTag("player"));
+    entityManager->getSystem<UIRenderSystem>().update(entityManager->getEntityFromTag("player"), camera);
     entityManager->getSystem<HealthRenderSystem>().update(camera);
 
 

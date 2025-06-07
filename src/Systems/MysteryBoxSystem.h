@@ -6,6 +6,7 @@
 #define MYSTERYBOXSYSTEM_H
 
 #include "ProjectileSystem.h"
+#include "UIRenderSystem.h"
 #include "../ECS/ECS.h"
 #include "../EventBus/EventBus.h"
 #include "../Events/MysteryBoxEvent.h"
@@ -20,7 +21,40 @@ public:
 
     void onDestroy(MysteryBoxEvent& e) {
         Entity& box = e.box;
-        box.entityManager->getSystem<ProjectileSystem>().addCharge("missile", 3);
+        auto& projectileSystem = box.entityManager->getSystem<ProjectileSystem>();
+        int32_t randomNum = GetRandomValue(1,4);
+        switch (randomNum) {
+            case 1:
+                projectileSystem.addCharge("missile", 1);
+                box.entityManager->getSystem<UIRenderSystem>().render("+1 MISSILE", box.getComponent<TransformComponent>().position);
+                break;
+            case 2:
+                projectileSystem.addCharge("arrow", GetRandomValue(1,3));
+                box.entityManager->getSystem<UIRenderSystem>().render("+1 ARROW", box.getComponent<TransformComponent>().position);
+
+                break;
+            case 3:
+                projectileSystem.arrowSelfDamage -= 5;
+                if (projectileSystem.arrowSelfDamage <= 6) {
+                    projectileSystem.arrowSelfDamage = 5;
+                    box.entityManager->getSystem<UIRenderSystem>().render("MAX PEN", box.getComponent<TransformComponent>().position);
+                } else {
+                    box.entityManager->getSystem<UIRenderSystem>().render("+5 ARROW PEN", box.getComponent<TransformComponent>().position);
+                }
+                break;
+            case 4:
+                projectileSystem.bulletDamage += 10;
+                if (projectileSystem.bulletDamage > 100) {
+                    projectileSystem.bulletDamage = 100;
+                    box.entityManager->getSystem<UIRenderSystem>().render("MAX DAMAGE", box.getComponent<TransformComponent>().position);
+                } else {
+                    box.entityManager->getSystem<UIRenderSystem>().render("+10 DAMAGE", box.getComponent<TransformComponent>().position);
+                }
+                break;
+            default:
+                break;
+        }
+
         box.entityManager->getSystem<ProjectileSystem>().arrowSelfDamage -= 5;
         box.kill();
     }
