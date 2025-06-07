@@ -83,7 +83,6 @@ public:
                 const char* text = renderList[i].first.first.c_str();
                 Vector3& worldPosition = renderList[i].first.second;
                 Vector2 position = GetWorldToScreen(worldPosition, camera);
-                std::cout << text << std::endl;
                 DrawText(text, position.x, position.y, 20, GREEN);
                 worldPosition.y += 0.01;
                 renderList[i].second -= 0.1;

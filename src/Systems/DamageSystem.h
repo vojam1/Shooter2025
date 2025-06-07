@@ -29,6 +29,9 @@ public:
         entityHealth.health -= event.damage;
 
         if (entityHealth.health <= 0) {
+            if (entity.hasGroup("enemy")) {
+                entity.entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score += 100;
+            }
             entity.kill();
         }
     }

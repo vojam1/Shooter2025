@@ -33,7 +33,7 @@ private:
     void unload();
 
     bool showMenu() const;
-    bool showGameOver() const;
+    bool showGameOver(bool highScore) const;
 
     double timeSinceLastSpawn = 0.0;
     double enemySpawnTime = 2.0;

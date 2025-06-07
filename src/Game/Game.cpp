@@ -110,7 +110,7 @@ bool Game::showMenu() const {
     return true;
 }
 
-bool Game::showGameOver() const {
+bool Game::showGameOver(bool highScore) const {
     while (true) {
         if (IsKeyPressed(KEY_ENTER)) return true;
         if (IsKeyPressed(KEY_ESCAPE)) return false;
@@ -118,8 +118,15 @@ bool Game::showGameOver() const {
         ClearBackground(RAYWHITE);
         DrawText("Game Over!", 400, 400, 200, RED);
         const int32_t score = entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score;
-        const std::string scoreStr = "Score: " + std::to_string(score);
-        DrawText(scoreStr.c_str(), 750, 650, 75, BLACK);
+        if (highScore) {
+            const std::string scoreStr = "NEW HIGH SCORE: " + std::to_string(score);
+            DrawText(scoreStr.c_str(), 550, 650, 75, GOLD);
+        } else {
+            const std::string scoreStr = "SCORE: " + std::to_string(score);
+            DrawText(scoreStr.c_str(), 750, 650, 75, BLACK);
+            std::string highScoreStr = "HIGH SCORE: " + std::to_string(HIGH_SCORE);
+            DrawText(highScoreStr.c_str(), 30, 990, 45, Color(171, 171, 61, 255));
+        }
         DrawText("Press ENTER to play again or ESCAPE to exit...", 1000, 1000, 35, GRAY);
         EndDrawing();
     }
@@ -134,10 +141,17 @@ void Game::run(){
         }
         isInit = true;
         Logger::log("FPS= " + std::to_string(GetFPS()));
+        Logger::log("HIGHSCORE= " + std::to_string(HIGH_SCORE));
         processInput();
         update();
         if (entityManager->getEntityFromTag("player").getComponent<HealthComponent>().health <= 0) {
-            if (showGameOver()) {
+            bool highScore = false;
+            auto& score = entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score;
+            if (score != 0 && score > HIGH_SCORE) {
+                highScore = true;
+                HIGH_SCORE = score;
+            }
+            if (showGameOver(highScore)) {
                 entityManager = std::make_unique<EntityManager>();
                 setup();
             } else {

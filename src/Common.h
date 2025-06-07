@@ -12,6 +12,8 @@
 constexpr float SCREEN_WIDTH = 1920;
 constexpr float SCREEN_HEIGHT = 1080;
 
+inline int32_t HIGH_SCORE = 0;
+
 template <typename T>
 using Ref = std::shared_ptr<T>;
 
