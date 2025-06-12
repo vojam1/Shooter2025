@@ -15,7 +15,17 @@
 
 class CollisionResolutionSystem : public System {
 public:
+    bool doubleScore = false;
+    int scoreMultiplier = 1;
+    double doubleScoreTime = 0.0;
+
     CollisionResolutionSystem() = default;
+
+    void activateDoubleScore() {
+        doubleScore = true;
+        scoreMultiplier = 2;
+        doubleScoreTime = GetTime();
+    }
 
     void subscribeToEvents(UniqueRef<EventBus>& eventBus) {
         eventBus->subscribeToEvent<CollisionEvent>(this, &CollisionResolutionSystem::onCollision);
@@ -28,30 +38,35 @@ public:
         auto& projectileHealth = projectile.getComponent<HealthComponent>();
         const std::string& tag = projectile.getComponent<ProjectileComponent>().tag;
 
-        if (tag == "missile") {
-            auto& projectileTransorm = projectile.getComponent<TransformComponent>();
-            auto& projectileCollision = projectile.getComponent<CollisionSphereComponent>();
+        if (doubleScore && GetTime() - doubleScoreTime >= 10.0) {
+            doubleScore = false;
+            scoreMultiplier = 1;
+        }
 
-            projectileCollision.radius = 10.0f;
-            for (auto& enemy: entity.entityManager->getEntitiesInGroup("enemy")) {
-                auto& enemyTransform = enemy.getComponent<TransformComponent>();
-                auto& enemyCollision = enemy.getComponent<CollisionSphereComponent>();
-                if (CheckCollisionSpheres(
-                enemyTransform.position,
-                enemyCollision.radius,
-                projectileTransorm.position,
-                projectileCollision.radius)) {
-                        enemy.getComponent<HealthComponent>().health -= projectile.getComponent<ProjectileComponent>().damage;
-                        projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
-                    }
-            }
+        if (tag == "missile") {
+            // auto& projectileTransorm = projectile.getComponent<TransformComponent>();
+            // auto& projectileCollision = projectile.getComponent<CollisionSphereComponent>();
+            //
+            // projectileCollision.radius = 10.0f;
+            // for (auto& enemy: entity.entityManager->getEntitiesInGroup("enemy")) {
+            //     auto& enemyTransform = enemy.getComponent<TransformComponent>();
+            //     auto& enemyCollision = enemy.getComponent<CollisionSphereComponent>();
+            //     if (CheckCollisionSpheres(
+            //     enemyTransform.position,
+            //     enemyCollision.radius,
+            //     projectileTransorm.position,
+            //     projectileCollision.radius)) {
+            //             enemy.getComponent<HealthComponent>().health -= projectile.getComponent<ProjectileComponent>().damage;
+            //             projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
+            //         }
+            //}
         } else {
             entityHealth.health -= projectile.getComponent<ProjectileComponent>().damage;
             projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
         }
 
         if (entityHealth.health <= 0) {
-            entity.entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score += 100;
+            entity.entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score += 100 * scoreMultiplier;
             entity.kill();
         }
 

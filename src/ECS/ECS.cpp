@@ -134,6 +134,7 @@ void EntityManager::groupEntity(const Entity entity, const std::string &group) {
 }
 
 bool EntityManager::hasGroup(const Entity entity, const std::string &group) const {
+    if (!entitiesInGroup.contains(group)) return false;
     const auto& vector = entitiesInGroup.at(group);
     return std::ranges::find(vector, entity) != vector.end();
 }

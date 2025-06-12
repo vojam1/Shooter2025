@@ -23,6 +23,9 @@ private:
     bool isDebug;
     bool isInit;
 
+    int32_t level = 1;
+    bool maxLevel = false;
+
     Texture2D skyTexture{};
 
     void update();

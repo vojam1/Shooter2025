@@ -15,6 +15,7 @@ public:
     Texture bulletTexture {};
     Texture arrowTexture {};
     Texture missileTexture {};
+    Texture heartTexture {};
 
     std::vector<std::pair<std::pair<std::string, Vector3>, double>> renderList {};
 
@@ -22,6 +23,7 @@ public:
         bulletTexture = LoadTexture("../res/Textures/bullet.png");
         arrowTexture = LoadTexture("../res/Textures/arrow.png");
         missileTexture = LoadTexture("../res/Textures/missile.png");
+        heartTexture = LoadTexture("../res/Textures/heart.png");
     }
 
     void drawWeaponUI(const Entity& player) const {
@@ -61,14 +63,12 @@ public:
         DrawText(std::to_string(missileCharges).c_str(), 355, SCREEN_HEIGHT - 200.f, 40, WHITE);
     }
 
-    static void drawPlayerUI(const Entity& player) {
+     void drawPlayerUI(const Entity& player) {
         const auto& playerHealth = player.getComponent<HealthComponent>().health;
         const auto& playerScore = player.getComponent<ScoreTrackerComponent>().score;
 
-        const Texture heart = LoadTexture("../res/Textures/heart.png");
-
         DrawText(std::to_string(playerHealth).c_str(), 10.f, 10.f, 50, RED);
-        DrawTextureEx(heart, Vector2(80.f, 10.f), 0, 0.35f, RED);
+        DrawTextureEx(heartTexture, Vector2(80.f, 10.f), 0, 0.35f, RED);
         const std::string scoreText = "SCORE: " + std::to_string(playerScore);
         DrawText(scoreText.c_str(), 10.f, 70.f, 30, BLACK);
 

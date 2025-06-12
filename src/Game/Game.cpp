@@ -39,6 +39,7 @@ Game::Game() {
     eventBus = std::make_unique<EventBus>();
     isDebug = false;
     isInit = false;
+    maxLevel = false;
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Shoot'Em Up!");
     SetTargetFPS(60);
@@ -73,6 +74,7 @@ void Game::setup() {
     assetBank->addModel("arrow_model", "../res/Models/Projectile/Arrow.glb");
     assetBank->addModel("box_model", "../res/Models/Objects/Box.glb");
     assetBank->addModel("barrier_model", "../res/Models/Objects/Barrier.glb");
+    assetBank->addModel("present_model", "../res/Models/Objects/Present.glb");
 
 
     camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
@@ -96,6 +98,9 @@ void Game::setup() {
     ground.addComponent<TransformComponent>(Vector3{ 0.0f, -1.0f, -30.0f }, Vector3{ 4.f, 0.1f, 45.f });
     ground.addComponent<MeshComponent>(GenMeshCube(1.75f, 1.f, 10.f));
 
+    maxLevel = false;
+    level = 1;
+    timeSinceLastLevel = 0.0;
 }
 
 bool Game::showMenu() const {
@@ -142,6 +147,7 @@ void Game::run(){
         isInit = true;
         Logger::log("FPS= " + std::to_string(GetFPS()));
         Logger::log("HIGHSCORE= " + std::to_string(HIGH_SCORE));
+        Logger::log("LEVEL= " + std::to_string(level));
         processInput();
         update();
         if (entityManager->getEntityFromTag("player").getComponent<HealthComponent>().health <= 0) {
@@ -174,15 +180,16 @@ void Game::update() {
     entityManager->getSystem<MysteryBoxSystem>().subscribeToEvents(eventBus);
 
     entityManager->update();
-    entityManager->getSystem<EnemySpawnerSystem>().update(entityManager, assetBank);
+    entityManager->getSystem<EnemySpawnerSystem>().update(entityManager, assetBank, level);
     entityManager->getSystem<MovementSystem>().update(deltaTime);
     entityManager->getSystem<KeyboardControllerSystem>().update();
     entityManager->getSystem<AnimationSystem>().update();
     entityManager->getSystem<CollisionSystem>().update(entityManager, eventBus);
     Logger::log(std::to_string(entityManager->getNumEntities()));
 
-    if (GetTime() - timeSinceLastLevel > 3.0) {
-        entityManager->getSystem<EnemySpawnerSystem>().level += 1;
+    if (!maxLevel && GetTime() - timeSinceLastLevel > 10.0) {
+        if (level >= 4) maxLevel = true;
+        else level++;
         timeSinceLastLevel = GetTime();
     }
 }

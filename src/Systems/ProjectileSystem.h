@@ -16,20 +16,31 @@
 
 class ProjectileSystem : public System {
 public:
+    bool instaKill = false;
+    double instaKillTime = 0.0;
+    int32_t previousDamage = 0;
+
     double lastSpawnTime = 0.0;
 
     int32_t bulletCharges = 2000000000;
     int32_t bulletDamage = 25;
 
     int32_t arrowCharges = 3;
-    int32_t arrowDamage = 100;
+    int32_t arrowDamage = 999;
     int32_t arrowSelfDamage = 25;
 
     int32_t missileCharges = 1;
-    int32_t missileDamage = 100;
+    int32_t missileDamage = 999;
 
     ProjectileSystem() {
         requireComponent<ProjectileShooterComponent>();
+    }
+
+    void activateInstaKill() {
+        instaKill = true;
+        previousDamage = bulletDamage;
+        bulletDamage = 999;
+        instaKillTime = GetTime();
     }
 
     void addCharge(const std::string& tag, int32_t charge) {
@@ -61,6 +72,11 @@ public:
             auto& projectileComp = entity.getComponent<ProjectileShooterComponent>();
 
             if (GetTime() - lastSpawnTime <= projectileComp.fireRate) { continue; }
+
+            if (instaKill && GetTime() - instaKillTime >= 5.0) {
+                bulletDamage = previousDamage;
+                instaKill = false;
+            }
 
             if (projectileComp.tag == "bullet") {
                 if (bulletCharges <= 0)
