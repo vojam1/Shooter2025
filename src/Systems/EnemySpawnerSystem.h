@@ -19,6 +19,8 @@ public:
 
     int32_t enemyHealth = 100;
 
+    int32_t boxSpawnChance = 0;
+
     std::vector<Entity> barriers {};
 
     void spawnBarrier(Entity& box) {
@@ -31,28 +33,32 @@ public:
                 spawnTime = 2.0f;
                 maxEnemies = 5;
                 enemyHealth = 100;
+                boxSpawnChance = 20;
                 break;
             case 2:
                 spawnTime = 1.5f;
                 maxEnemies = 7;
                 enemyHealth = 100;
+                boxSpawnChance = 15;
                 break;
             case 3:
                 spawnTime = 1.5f;
                 maxEnemies = 10;
                 enemyHealth = 150;
+                boxSpawnChance = 10;
                 break;
             case 4:
                 spawnTime = 1.0f;
                 maxEnemies = 10;
                 enemyHealth = 200;
+                boxSpawnChance = 10;
                 break;
         }
         if (GetTime() - timeSinceLastSpawn > spawnTime) {
             constexpr float posArray[3] = {1.5f, 0.0f, -1.5f};
             const float xPos = posArray[GetRandomValue(0, 2)];
             for (int i=0; i<GetRandomValue(1,maxEnemies); i++) {
-                bool spawnBox = GetRandomValue(0,20) == 10;
+                bool spawnBox = GetRandomValue(0,boxSpawnChance) == 10;
                 bool spawnPresent = GetRandomValue(0,20) == 15;
                 if (spawnBox) {
                     Entity box = entityManager->createEntity();

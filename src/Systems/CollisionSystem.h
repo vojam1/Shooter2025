@@ -62,8 +62,11 @@ public:
             const auto& enemyTransform = enemy.getComponent<TransformComponent>();
             auto& enemyCollision = enemy.getComponent<CollisionSphereComponent>();
 
-            if (enemyTransform.position.z >= 5 || enemyTransform.position.z <= -40) {
+            if (enemyTransform.position.z >= 5) {
                 eventBus->emitEvent<DamageEvent>(player, 10);
+                eventBus->emitEvent<DamageEvent>(enemy, 100);
+            }
+            if (enemyTransform.position.z <= -40) {
                 eventBus->emitEvent<DamageEvent>(enemy, 100);
             }
             for (auto& barrier: barriers) {

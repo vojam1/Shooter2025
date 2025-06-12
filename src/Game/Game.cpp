@@ -66,9 +66,11 @@ void Game::setup() {
     entityManager->addSystem<MysteryBoxSystem>();
     entityManager->addSystem<HealthRenderSystem>();
 
-    assetBank->addModel("player_model", "../res/Models/Player/Soldier.glb");
+    assetBank->addModel("player_model", "../res/Models/Player/Tank.glb");
+
     assetBank->addModel("zombie_model", "../res/Models/Enemy/Zombie.glb");
     assetBank->addModelAnimation("zombie_animation", "../res/Models/Enemy/Zombie.glb");
+
     assetBank->addModel("bullet_model", "../res/Models/Projectile/Bullet.glb");
     assetBank->addModel("missile_model", "../res/Models/Projectile/Missile.glb");
     assetBank->addModel("arrow_model", "../res/Models/Projectile/Arrow.glb");
@@ -85,7 +87,10 @@ void Game::setup() {
 
     Entity player = entityManager->createEntity();
     player.tag("player");
-    player.addComponent<TransformComponent>(Vector3{ 0.0f, 1.0f, 5.0f }, Vector3{ 0.25f, 0.25f, 0.25f });
+    player.addComponent<TransformComponent>(Vector3{ 0.0f, 1.0f, 5.0f },
+                                            Vector3{ 0.15f, 0.15f, 0.15f },
+                                            Vector3{ 0.0f, 1.0f, 0.0f },
+                                            -90.f);
     player.addComponent<RigidbodyComponent>(Vector3{ 0.0f, 0.0f, 0.0f }, 5.0f);
     player.addComponent<MeshComponent>(assetBank->getModel("player_model"));
     player.addComponent<KeyboardControllerComponent>();
@@ -187,10 +192,16 @@ void Game::update() {
     entityManager->getSystem<CollisionSystem>().update(entityManager, eventBus);
     Logger::log(std::to_string(entityManager->getNumEntities()));
 
-    if (!maxLevel && GetTime() - timeSinceLastLevel > 10.0) {
-        if (level >= 4) maxLevel = true;
-        else level++;
-        timeSinceLastLevel = GetTime();
+    int32_t score = entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score;
+    if (!maxLevel) {
+        if (score > 2000 && score < 5000) {
+            level = 2;
+        } else if (score > 5000 && score < 10000) {
+            level = 3;
+        } else if (score > 10000 && score < 20000) {
+            level = 4;
+            maxLevel = true;
+        }
     }
 }
 

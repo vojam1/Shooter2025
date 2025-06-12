@@ -44,22 +44,22 @@ public:
         }
 
         if (tag == "missile") {
-            // auto& projectileTransorm = projectile.getComponent<TransformComponent>();
-            // auto& projectileCollision = projectile.getComponent<CollisionSphereComponent>();
-            //
-            // projectileCollision.radius = 10.0f;
-            // for (auto& enemy: entity.entityManager->getEntitiesInGroup("enemy")) {
-            //     auto& enemyTransform = enemy.getComponent<TransformComponent>();
-            //     auto& enemyCollision = enemy.getComponent<CollisionSphereComponent>();
-            //     if (CheckCollisionSpheres(
-            //     enemyTransform.position,
-            //     enemyCollision.radius,
-            //     projectileTransorm.position,
-            //     projectileCollision.radius)) {
-            //             enemy.getComponent<HealthComponent>().health -= projectile.getComponent<ProjectileComponent>().damage;
-            //             projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
-            //         }
-            //}
+             auto& projectileTransorm = projectile.getComponent<TransformComponent>();
+             auto& projectileCollision = projectile.getComponent<CollisionSphereComponent>();
+
+             projectileCollision.radius = 10.0f;
+             for (auto& enemy: entity.entityManager->getEntitiesInGroup("enemy")) {
+                 auto& enemyTransform = enemy.getComponent<TransformComponent>();
+                 auto& enemyCollision = enemy.getComponent<CollisionSphereComponent>();
+                 if (CheckCollisionSpheres(
+                 enemyTransform.position,
+                 enemyCollision.radius,
+                 projectileTransorm.position,
+                 projectileCollision.radius)) {
+                         enemy.kill();
+                     }
+            }
+            projectile.kill();
         } else {
             entityHealth.health -= projectile.getComponent<ProjectileComponent>().damage;
             projectileHealth.health -= projectile.getComponent<ProjectileComponent>().selfDamage;
