@@ -34,6 +34,8 @@ public:
                     break;
                 case 3:
                     box.entityManager->getSystem<ProjectileSystem>().activateInstaKill();
+                    box.entityManager->getSystem<UIRenderSystem>().isInstaKill = true;
+                    box.entityManager->getSystem<UIRenderSystem>().instaKillTimer = GetTime();
                     box.entityManager->getSystem<UIRenderSystem>().render("INSTA KILL", box.getComponent<TransformComponent>().position);
                     break;
                 default:

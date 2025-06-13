@@ -8,10 +8,15 @@
 #include <charconv>
 
 #include "../ECS/ECS.h"
+#include "../Systems/ProjectileSystem.h"
 #include <raylib.h>
 
 class UIRenderSystem: public System {
 public:
+    bool isInstaKill = false;
+    double instaKillTimer = 0.0;
+
+    Texture skullTexture {};
     Texture bulletTexture {};
     Texture arrowTexture {};
     Texture missileTexture {};
@@ -24,6 +29,12 @@ public:
         arrowTexture = LoadTexture("../res/Textures/arrow.png");
         missileTexture = LoadTexture("../res/Textures/missile.png");
         heartTexture = LoadTexture("../res/Textures/heart.png");
+        skullTexture = LoadTexture("../res/Textures/skull.png");
+    }
+
+    void drawInstaKill() {
+        DrawTexture(skullTexture, 1700.f, 10.f, WHITE);
+        DrawText("INSTA KILL", 1670.f, 170.f, 40, RED);
     }
 
     void drawWeaponUI(const Entity& player) const {
@@ -77,6 +88,13 @@ public:
     void update(const Entity& player, Camera3D& camera) {
         drawPlayerUI(player);
         drawWeaponUI(player);
+        if (isInstaKill) {
+            if (GetTime() - instaKillTimer >= 5.f) {
+                isInstaKill = false;
+            } else {
+                drawInstaKill();
+            }
+        }
 
         for (int i=0; i < renderList.size(); i++) {
             if (renderList[i].second > 0.0) {
