@@ -40,14 +40,16 @@ Game::Game() {
     isDebug = false;
     isInit = false;
     maxLevel = false;
+    level = 1;
 
     InitWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Shoot'Em Up!");
     SetTargetFPS(60);
     ToggleFullscreen();
     DisableCursor();
-
+    InitAudioDevice();
 
     skyTexture = LoadTexture("../res/Textures/sky.png");
+    music = LoadMusicStream("../res/Sounds/game-music-loop.mp3");
 }
 
 void Game::setup() {
@@ -78,6 +80,15 @@ void Game::setup() {
     assetBank->addModel("barrier_model", "../res/Models/Objects/Barrier.glb");
     assetBank->addModel("present_model", "../res/Models/Objects/Present.glb");
 
+    assetBank->addSound("gun_shot", "../res/Sounds/gun-shot.mp3", 1.0f);
+    assetBank->addSound("arrow", "../res/Sounds/arrow.mp3", 0.4f);
+    assetBank->addSound("missile", "../res/Sounds/missile.mp3", 1.0f);
+    assetBank->addSound("zombie-dying", "../res/Sounds/zombie-dying.mp3", 0.1f);
+    assetBank->addSound("explosion", "../res/Sounds/explosion.mp3", 0.1f);
+    assetBank->addSound("box-destroy", "../res/Sounds/box-destroy.mp3", 0.1f);
+    assetBank->addSound("game_start", "../res/Sounds/game-start.mp3", 1.0f);
+    assetBank->addSound("game_over", "../res/Sounds/game-over.mp3", 1.0f);
+    assetBank->addSound("insta-kill", "../res/Sounds/insta-kill.mp3", 1.0f);
 
     camera.position = (Vector3){ 0.0f, 6.f, 10.0f }; // Camera position
     camera.target = (Vector3){ 0.0f, 0.0f, 0.0f };      // Camera looking at point
@@ -105,11 +116,12 @@ void Game::setup() {
 
     maxLevel = false;
     level = 1;
-    timeSinceLastLevel = 0.0;
+    PlayMusicStream(music);
 }
 
 bool Game::showMenu() const {
     if (IsKeyPressed(KEY_ENTER)) {
+        PlaySound(assetBank->getSound("game_start"));
         return false;
     }
     BeginDrawing();
@@ -121,6 +133,7 @@ bool Game::showMenu() const {
 }
 
 bool Game::showGameOver(bool highScore) const {
+    PlaySound(assetBank->getSound("game_over"));
     while (true) {
         if (IsKeyPressed(KEY_ENTER)) return true;
         if (IsKeyPressed(KEY_ESCAPE)) return false;
@@ -176,6 +189,7 @@ void Game::run(){
 }
 
 void Game::update() {
+    UpdateMusicStream(music);
     const float deltaTime = GetFrameTime();
     UpdateCamera(&camera, CAMERA_PERSPECTIVE);
 
@@ -240,6 +254,13 @@ void Game::processInput() {
     }
     if (IsKeyPressed(KEY_ENTER)) {
         entityManager->getSystem<ProjectileSystem>().fireProjectile(entityManager, assetBank);
+        const std::string& tag = entityManager->getEntityFromTag("player").getComponent<ProjectileShooterComponent>().tag;
+        if (tag == "bullet")
+            PlaySound(assetBank->getSound("gun_shot"));
+        else if (tag == "arrow")
+            PlaySound(assetBank->getSound("arrow"));
+        else if (tag == "missile")
+            PlaySound(assetBank->getSound("missile"));
     }
     if (IsKeyPressed(KEY_ONE)) {
         entityManager->getEntityFromTag("player").addComponent<ProjectileShooterComponent>("bullet");

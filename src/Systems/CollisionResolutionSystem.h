@@ -12,6 +12,7 @@
 #include "../Components/HealthComponent.h"
 #include "../Components/ProjectileComponent.h"
 #include "../Components/ScoreTrackerComponent.h"
+#include "../Components/SfxComponent.h"
 
 class CollisionResolutionSystem : public System {
 public:
@@ -59,6 +60,7 @@ public:
                          enemy.kill();
                      }
             }
+            PlaySound(projectile.getComponent<SfxComponent>().dyingSound);
             projectile.kill();
         } else {
             entityHealth.health -= projectile.getComponent<ProjectileComponent>().damage;
@@ -67,6 +69,7 @@ public:
 
         if (entityHealth.health <= 0) {
             entity.entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score += 100 * scoreMultiplier;
+            PlaySound(entity.getComponent<SfxComponent>().dyingSound);
             entity.kill();
         }
 

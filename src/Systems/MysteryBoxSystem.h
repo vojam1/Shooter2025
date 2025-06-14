@@ -79,6 +79,7 @@ public:
                     break;
             }
         }
+        PlaySound(box.getComponent<SfxComponent>().dyingSound);
         box.kill();
     }
 };

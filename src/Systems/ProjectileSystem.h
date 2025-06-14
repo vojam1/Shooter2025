@@ -107,6 +107,7 @@ public:
             bullet.addComponent<CollisionSphereComponent>(projectileComp.radius, 5, 5);
             bullet.addComponent<ProjectileComponent>(projectileComp.tag, getDamage(projectileComp.tag), projectileComp.tag == "arrow" ? arrowSelfDamage : projectileComp.selfDamage);
             bullet.addComponent<HealthComponent>();
+            bullet.addComponent<SfxComponent>(assetBank->getSound("explosion"));
             lastSpawnTime = GetTime();
         }
     }

@@ -67,6 +67,7 @@ public:
                     box.addComponent<MeshComponent>(assetBank->getModel("box_model"));
                     box.addComponent<RigidbodyComponent>(Vector3{0,0, 1.f,}, 5.f);
                     box.addComponent<CollisionSphereComponent>(0.5f, 5, 5, YELLOW);
+                    box.addComponent<SfxComponent>(assetBank->getSound("box-destroy"));
                     box.addComponent<HealthComponent>();
                     continue;
                 }
@@ -78,6 +79,7 @@ public:
                     present.addComponent<MeshComponent>(assetBank->getModel("present_model"));
                     present.addComponent<RigidbodyComponent>(Vector3{0,0, 1.f,}, 5.f);
                     present.addComponent<CollisionSphereComponent>(0.5f, 5, 5, YELLOW);
+                    present.addComponent<SfxComponent>(assetBank->getSound("box-destroy"));
                     present.addComponent<HealthComponent>();
                     continue;
                 }
@@ -89,6 +91,7 @@ public:
                 zombie.addComponent<RigidbodyComponent>(Vector3{ 0.0f, 0.0f, 1.0f }, 5.0f);
                 zombie.addComponent<HealthComponent>(enemyHealth);
                 zombie.addComponent<HealthRenderComponent>();
+                zombie.addComponent<SfxComponent>(assetBank->getSound("zombie-dying"));
                 zombie.addComponent<AnimationComponent>(assetBank->getModelAnimation("zombie_animation").first,
                     assetBank->getModelAnimation("zombie_animation").second, 7);
                 timeSinceLastSpawn = GetTime();

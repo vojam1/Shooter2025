@@ -31,6 +31,7 @@ public:
         if (entityHealth.health <= 0) {
             if (entity.hasGroup("enemy")) {
                 entity.entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score += 100;
+                PlaySound(entity.getComponent<SfxComponent>().dyingSound);
             }
             entity.kill();
         }

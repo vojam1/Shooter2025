@@ -30,3 +30,17 @@ void AssetBank::removeModelAnimation(const std::string& modelAnimId) {
 std::pair<ModelAnimation*, int>& AssetBank::getModelAnimation(const std::string &modelAnimId) {
     return animations.at(modelAnimId);
 }
+
+void AssetBank::addSound(const std::string &soundId, const char *filePath, float volume) {
+    Sound sound = LoadSound(filePath);
+    SetSoundVolume(sound, volume);
+    sounds.insert(std::make_pair(soundId, sound));
+}
+
+void AssetBank::removeSound(const std::string &soundId) {
+    sounds.erase(sounds.find(soundId));
+}
+
+Sound &AssetBank::getSound(const std::string &soundId) {
+    return sounds.at(soundId);
+}

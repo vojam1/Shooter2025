@@ -43,6 +43,7 @@ add_executable(Shooter2025 src/main.cpp
         src/Systems/MysteryBoxSystem.h
         src/Components/HealthRenderComponent.h
         src/Systems/HealthRenderSystem.h
+        src/Components/SfxComponent.h
 )
 
 include_directories("/usr/local/include")

@@ -23,10 +23,11 @@ private:
     bool isDebug;
     bool isInit;
 
-    int32_t level = 1;
-    bool maxLevel = false;
+    int32_t level;
+    bool maxLevel;
 
     Texture2D skyTexture{};
+    Music music {};
 
     void update();
     void render();
@@ -37,11 +38,6 @@ private:
 
     bool showMenu() const;
     bool showGameOver(bool highScore) const;
-
-    double timeSinceLastSpawn = 0.0;
-    double enemySpawnTime = 2.0;
-
-    double timeSinceLastLevel = 0.0;
 
     static Camera3D camera;
     UniqueRef<EntityManager> entityManager;

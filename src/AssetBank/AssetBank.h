@@ -21,9 +21,15 @@ public:
     void removeModelAnimation(const std::string& modelAnimId);
     std::pair<ModelAnimation*, int>& getModelAnimation(const std::string& modelAnimId);
 
+    void addSound(const std::string& soundId, const char* filePath, float volume);
+    void removeSound(const std::string& soundId);
+    Sound& getSound(const std::string& soundId);
+
 private:
     std::unordered_map<std::string, Model> models;
     std::unordered_map<std::string, std::pair<ModelAnimation*, int>> animations;
+
+    std::unordered_map<std::string, Sound> sounds;
 };
 
 
