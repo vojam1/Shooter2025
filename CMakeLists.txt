@@ -46,5 +46,5 @@ add_executable(Shooter2025 src/main.cpp
         src/Components/SfxComponent.h
 )
 
-include_directories("/usr/local/include")
-target_link_libraries(Shooter2025 "/usr/local/lib/libraylib.a")
+include_directories("/vendor/raylib/include")
+target_link_libraries(Shooter2025 "${CMAKE_SOURCE_DIR}/vendor/raylib/lib/libraylib.a")
