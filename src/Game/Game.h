@@ -31,7 +31,7 @@ private:
 
     void update();
     void render();
-    void processInput();
+    void processInput() const;
 
     void setup();
     void unload();

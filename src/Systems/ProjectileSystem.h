@@ -37,6 +37,10 @@ public:
     }
 
     void activateInstaKill() {
+        if (instaKill) {
+            instaKillTime = GetTime();
+            return;
+        }
         instaKill = true;
         previousDamage = bulletDamage;
         bulletDamage = 999;
@@ -98,7 +102,7 @@ public:
             bullet.group("bullet");
 
             auto& playerTransform = entity.getComponent<TransformComponent>();
-            bullet.addComponent<TransformComponent>(Vector3(playerTransform.position.x, 0, playerTransform.position.z ),
+            bullet.addComponent<TransformComponent>(Vector3(playerTransform.position.x, 0, playerTransform.position.z - 1.f ),
                 projectileComp.scale,
                 projectileComp.rotation,
                 projectileComp.angle);

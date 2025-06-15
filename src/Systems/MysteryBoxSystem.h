@@ -65,8 +65,8 @@ public:
                     break;
                 case 4:
                     projectileSystem.bulletDamage += 10;
-                    if (projectileSystem.bulletDamage >= 50) {
-                        projectileSystem.bulletDamage = 50;
+                    if (projectileSystem.bulletDamage >= 100) {
+                        projectileSystem.bulletDamage = 100;
                         box.entityManager->getSystem<UIRenderSystem>().render("MAX DAMAGE", box.getComponent<TransformComponent>().position);
                     } else {
                         box.entityManager->getSystem<UIRenderSystem>().render("+10 DAMAGE", box.getComponent<TransformComponent>().position);

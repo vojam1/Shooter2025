@@ -163,9 +163,6 @@ void Game::run(){
             continue;
         }
         isInit = true;
-        Logger::log("FPS= " + std::to_string(GetFPS()));
-        Logger::log("HIGHSCORE= " + std::to_string(HIGH_SCORE));
-        Logger::log("LEVEL= " + std::to_string(level));
         processInput();
         update();
         if (entityManager->getEntityFromTag("player").getComponent<HealthComponent>().health <= 0) {
@@ -204,7 +201,6 @@ void Game::update() {
     entityManager->getSystem<KeyboardControllerSystem>().update();
     entityManager->getSystem<AnimationSystem>().update();
     entityManager->getSystem<CollisionSystem>().update(entityManager, eventBus);
-    Logger::log(std::to_string(entityManager->getNumEntities()));
 
     int32_t score = entityManager->getEntityFromTag("player").getComponent<ScoreTrackerComponent>().score;
     if (!maxLevel) {
@@ -248,10 +244,7 @@ void Game::render(){
     EndDrawing();
 }
 
-void Game::processInput() {
-    if (IsKeyPressed(KEY_COMMA)) {
-        isDebug = !isDebug;
-    }
+void Game::processInput() const {
     if (IsKeyPressed(KEY_ENTER)) {
         entityManager->getSystem<ProjectileSystem>().fireProjectile(entityManager, assetBank);
         const std::string& tag = entityManager->getEntityFromTag("player").getComponent<ProjectileShooterComponent>().tag;

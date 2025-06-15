@@ -30,28 +30,28 @@ public:
     void update(const UniqueRef<EntityManager>& entityManager, const UniqueRef<AssetBank>& assetBank, int32_t level) {
         switch (level) {
             case 1:
-                spawnTime = 2.0f;
-                maxEnemies = 5;
+                spawnTime = 1.5f;
+                maxEnemies = 7;
                 enemyHealth = 100;
                 boxSpawnChance = 20;
                 break;
             case 2:
-                spawnTime = 1.5f;
-                maxEnemies = 7;
+                spawnTime = 1.25f;
+                maxEnemies = 9;
                 enemyHealth = 100;
                 boxSpawnChance = 15;
                 break;
             case 3:
-                spawnTime = 1.5f;
+                spawnTime = 1.25f;
                 maxEnemies = 10;
                 enemyHealth = 150;
-                boxSpawnChance = 10;
+                boxSpawnChance = 15;
                 break;
             case 4:
                 spawnTime = 1.0f;
                 maxEnemies = 10;
                 enemyHealth = 200;
-                boxSpawnChance = 10;
+                boxSpawnChance = 15;
                 break;
         }
         if (GetTime() - timeSinceLastSpawn > spawnTime) {
@@ -59,7 +59,7 @@ public:
             const float xPos = posArray[GetRandomValue(0, 2)];
             for (int i=0; i<GetRandomValue(1,maxEnemies); i++) {
                 bool spawnBox = GetRandomValue(0,boxSpawnChance) == 10;
-                bool spawnPresent = GetRandomValue(0,20) == 15;
+                bool spawnPresent = GetRandomValue(0,25) == 15;
                 if (spawnBox) {
                     Entity box = entityManager->createEntity();
                     box.group("box");
