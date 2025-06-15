@@ -1,15 +1,18 @@
-# In progress
+# Getting started
 A simple shoot 'em up made with C++ and raylib using the ECS design pattern.
 
-![250601_15h22m49s_screenshot](https://github.com/user-attachments/assets/d587d5a2-d0f2-4643-8d3b-35bdecc0cb7c)
+![image](https://github.com/user-attachments/assets/54c6ddf4-486e-4664-8c20-282cdda297d3)
 
-## Prerequisites
-1. raylib
-2. CMake
+## Building on linux
+### Prerequisites
+1. CMake
 
-## Building with make and cmake on linux
+### Building and running
 ```
+git clone https://github.com/vojam1/Shooter2025
+cd Shooter2025
 cmake -S . -B build
 cd build
 make
+./Shooter2025
 ```
