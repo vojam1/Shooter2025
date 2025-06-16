@@ -17,7 +17,7 @@ make
 ./Shooter2025
 ```
 
-##Attribution
+## Attribution
 Zombie by bachosoftdesign [CC-BY] via Poly Pizza
 Present by J-Toastie [CC-BY] via Poly Pizza
 Tank by KolosStudios [CC-BY] via Poly Pizza
