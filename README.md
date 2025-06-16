@@ -18,8 +18,8 @@ make
 ```
 
 ## Attribution
-Zombie by bachosoftdesign [CC-BY] via Poly Pizza
-Present by J-Toastie [CC-BY] via Poly Pizza
-Tank by KolosStudios [CC-BY] via Poly Pizza
-Arrow, Bullet and Missile by Poly by Google [CC-BY] via Poly Pizza
-Barrier, Box and Present by Quaternius
+-Zombie by bachosoftdesign [CC-BY] via Poly Pizza
+-Present by J-Toastie [CC-BY] via Poly Pizza
+-Tank by KolosStudios [CC-BY] via Poly Pizza
+-Arrow, Bullet and Missile by Poly by Google [CC-BY] via Poly Pizza
+-Barrier, Box and Present by Quaternius
